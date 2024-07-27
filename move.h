@@ -6,6 +6,7 @@ struct Move {
     Position from, to;
     Piece* originalPiece;
     Piece* capturedPiece;
+    Piece* promotionPiece;
     bool enPassant;
     std::string toString();
 };
