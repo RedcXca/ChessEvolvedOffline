@@ -6,18 +6,8 @@
 
 class RossEvans : public Piece {
 public:
-    char toChar() override {
-        return color == Color::White ? 'E' : 'e';
-    }
-    int getValue() override {
-        return 12;
-    }
-    std::vector<PartialMove> getPossibleMoves() override {
-        std::vector<PartialMove> moves;
-        pushRookMoves(moves, 7, MoveType::MoveOrAttack);
-        pushBishopMoves(moves, 7, MoveType::MoveOrAttack);
-        pushKnightMoves(moves, MoveType::UnblockableMoveOrAttack);
-        return moves;
-    }
+    char toChar() override;
+    int getValue() override;
+    std::vector<PartialMove> getPossibleMoves() override;
 };
 #endif;

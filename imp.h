@@ -7,23 +7,8 @@
 
 class Imp : public Piece {
 public:
-    char toChar() override {
-        return color == Color::White ? 'I' : 'i';
-    }
-    int getValue() override {
-        return 2;
-    }
-    std::vector<PartialMove> getPossibleMoves() override {
-        std::vector<PartialMove> moves;
-        moves.push_back({0, 1, MoveType::MoveOrAttack});
-        moves.push_back({0, -1, MoveType::MoveOrAttack});
-        moves.push_back({0, 2, MoveType::UnblockableMoveOrAttack});
-        moves.push_back({0, -2, MoveType::UnblockableMoveOrAttack});
-        moves.push_back({1, -2, MoveType::Teleport});
-        moves.push_back({-1, -2, MoveType::Teleport});
-        moves.push_back({1, 2, MoveType::Teleport});
-        moves.push_back({-1, 2, MoveType::Teleport});
-        return moves;
-    }
+    char toChar() override;
+    int getValue() override;
+    std::vector<PartialMove> getPossibleMoves() override;
 };
 #endif

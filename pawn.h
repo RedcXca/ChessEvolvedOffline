@@ -6,20 +6,8 @@
 
 class Pawn : public Piece {
 public:
-    char toChar() override {
-        return color == Color::White ? 'P' : 'p';
-    }
-    int getValue() override {
-        return 1;
-    }
-    std::vector<PartialMove> getPossibleMoves() override {
-        std::vector<PartialMove> moves;
-        int direction = color == Color::White ? 1 : -1;
-        moves.push_back({0, direction, MoveType::MoveOnly});
-        moves.push_back({0, 2 * direction, MoveType::MoveOnly});
-        moves.push_back({1, direction, MoveType::AttackOnly});
-        moves.push_back({-1, direction, MoveType::AttackOnly});
-        return moves;
-    }
+    char toChar() override;
+    int getValue() override;
+    std::vector<PartialMove> getPossibleMoves() override; 
 };
 #endif

@@ -6,16 +6,8 @@
 
 class Demon : public Piece {
 public:
-    char toChar() override {
-        return color == Color::White ? 'D' : 'd';
-    }
-    int getValue() override {
-        return 4;
-    }
-    std::vector<PartialMove> getPossibleMoves() override {
-        std::vector<PartialMove> moves;
-        pushKnightMoves(moves, MoveType::Teleport);
-        pushRookMoves(moves, 4, MoveType::MoveOrAttack);
-    }
+    char toChar() override;
+    int getValue() override;
+    std::vector<PartialMove> getPossibleMoves() override;
 };
 #endif

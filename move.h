@@ -4,6 +4,9 @@
 #include "piece.h"
 struct Move {
     Position from, to;
-    
+    Piece* originalPiece;
+    Piece* capturedPiece;
+    bool enPassant;
+    std::string toString();
 };
 #endif

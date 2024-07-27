@@ -6,18 +6,8 @@
 
 class Cougar : public Piece {
 public:
-    char toChar() override {
-        return color == Color::White ? 'C' : 'c';
-    }
-    int getValue() override {
-        return 3;
-    }
-    std::vector<PartialMove> getPossibleMoves() override {
-        std::vector<PartialMove> moves;
-        pushZebraMoves(moves, MoveType::Teleport);
-        pushKnightMoves(moves, MoveType::Teleport);
-        pushBishopMoves(moves, 2, MoveType::UnblockableAttackOnly, 2);
-        return moves;
-    }
+    char toChar() override;
+    int getValue() override;
+    std::vector<PartialMove> getPossibleMoves() override;
 };
 #endif

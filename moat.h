@@ -6,23 +6,8 @@
 
 class Moat : public Piece {
 public:
-    char toChar() override {
-        return color == Color::White ? 'M' : 'm';
-    }
-    int getValue() override {
-        return 3;
-    }
-    std::vector<PartialMove> getPossibleMoves() override {
-        std::vector<PartialMove> moves;
-        for (int i = -7; i <= 7; i++) {
-            moves.push_back({i, 0, MoveType::UnblockableAttackOnly});
-        }
-        if (!hasMoved) {
-            moves.push_back({0, 1, MoveType::MoveOnly});
-            moves.push_back({1, 1, MoveType::MoveOnly});
-            moves.push_back({-1, 1, MoveType::MoveOnly});
-        }
-        return moves;
-    }
+    char toChar() override;
+    int getValue() override;
+    std::vector<PartialMove> getPossibleMoves() override;
 };
 #endif

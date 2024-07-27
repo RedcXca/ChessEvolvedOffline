@@ -6,16 +6,8 @@
 
 class Valkyrie : public Piece {
 public:
-    char toChar() override {
-        return color == Color::White ? 'V' : 'v';
-    }
-    int getValue() override {
-        return 4;
-    }
-    std::vector<PartialMove> getPossibleMoves() override {
-        std::vector<PartialMove> moves;
-        pushValkyrieMoves(moves, MoveType::UnblockableMoveOrAttack);
-        return moves;
-    }
+    char toChar() override;
+    int getValue() override;
+    std::vector<PartialMove> getPossibleMoves() override;
 };
 #endif

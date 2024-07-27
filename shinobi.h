@@ -6,19 +6,9 @@
 
 class Shinobi : public Piece {
 public:
-    char toChar() override {
-        return color == Color::White ? 'S' : 's';
-    }
-    int getValue() override {
-        return 5;
-    }
-    std::vector<PartialMove> getPossibleMoves() override {
-        std::vector<PartialMove> moves;
-        pushKingMoves(moves, MoveType::MoveOrAttack);
-        pushBishopMoves(moves, 2, MoveType::UnblockableMoveOrAttack, 2);
-        pushRookMoves(moves, 3, MoveType::UnblockableMoveOrAttack, 3);
-        return moves;
-    }
+    char toChar() override;
+    int getValue() override;
+    std::vector<PartialMove> getPossibleMoves() override;
 };
 
 #endif
