@@ -226,6 +226,7 @@ bool Board::placePiece(Position pos, char piece) {
         break;
     case 'k':
         allPieces.push_back(std::make_unique<King>(color));
+        kingPositions[color] = pos;
         break;
     case 'l':
         allPieces.push_back(std::make_unique<Legionary>(color));
