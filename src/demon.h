@@ -4,10 +4,10 @@
 
 // Demon trades off some of the higher range of a rook for knight teleports
 
-class Demon : public Piece {
-public:
+struct Demon : Piece {
     char toChar() override;
     int getValue() override;
     std::vector<PartialMove> getPossibleMoves() override;
+    using Piece::Piece;
 };
 #endif

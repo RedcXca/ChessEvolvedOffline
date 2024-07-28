@@ -4,10 +4,10 @@
 
 // A dangerous piece with tons of power at close range. Watch your king next to this piece!
 
-class Juggernaut : public Piece {
-public:
+struct Juggernaut : Piece {
     char toChar() override;
     int getValue() override;
     std::vector<PartialMove> getPossibleMoves() override;
+    using Piece::Piece;
 };
 #endif

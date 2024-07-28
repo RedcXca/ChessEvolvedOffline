@@ -4,10 +4,10 @@
 
 // Angel is a strong, mobile piece with high checkmating potential
 
-class Angel : public Piece {
-public:
+struct Angel : Piece {
     char toChar() override;
     int getValue() override;
     std::vector<PartialMove> getPossibleMoves() override;
+    using Piece::Piece;
 };
 #endif

@@ -1,7 +1,7 @@
 #include "rossevans.h"
 
 char RossEvans::toChar() {
-    return color == Color::White ? 'R' : 'r';
+    return color == Color::White ? 'E' : 'e';
 }
 
 int RossEvans::getValue() {

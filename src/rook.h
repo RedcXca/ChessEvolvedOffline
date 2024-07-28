@@ -4,10 +4,10 @@
 
 // Classic chess rook
 
-class Rook : public Piece {
-public:
+struct Rook : Piece {
     char toChar() override;
     int getValue() override;
     std::vector<PartialMove> getPossibleMoves() override;
+    using Piece::Piece;
 };
 #endif

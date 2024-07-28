@@ -4,10 +4,10 @@
 
 // Classic chess king. Protect him well.
 
-class King : public Piece {
-public:
+struct King : Piece {
     char toChar() override;
     int getValue() override;
     std::vector<PartialMove> getPossibleMoves() override;
+    using Piece::Piece;
 };
 #endif

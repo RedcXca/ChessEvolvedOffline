@@ -4,10 +4,10 @@
 
 // Fencer has the ability to teleport deep into enemy lines, posing dangerous threats
 
-class Fencer : public Piece {
-public:
+struct Fencer : Piece {
     char toChar() override;
     int getValue() override;
     std::vector<PartialMove> getPossibleMoves() override;
+    using Piece::Piece;
 };
 #endif

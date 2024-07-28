@@ -4,10 +4,10 @@
 
 // Classic chess bishop
 
-class Bishop : public Piece {
-public:
+struct Bishop : Piece {
     char toChar()  override;
     int getValue() override;
     std::vector<PartialMove> getPossibleMoves() override;
+    using Piece::Piece;
 };
 #endif

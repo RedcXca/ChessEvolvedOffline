@@ -4,10 +4,10 @@
 
 // Simple, effective moveset: a king is surprisingly powerful when it cannot be checked
 
-class Orc : public Piece {
-    public:
+struct Orc : Piece {
     char toChar() override;
     int getValue() override;
     std::vector<PartialMove> getPossibleMoves() override;
+    using Piece::Piece;
 };
 #endif

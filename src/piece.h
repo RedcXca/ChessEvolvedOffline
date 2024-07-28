@@ -21,5 +21,6 @@ public:
     Color getColor() { return color; }
     virtual std::vector<PartialMove> getPossibleMoves() = 0;
     virtual char toChar() = 0;
+    Piece(Color color) : color(color) {}
 };
 #endif
