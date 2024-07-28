@@ -1,5 +1,3 @@
-Hello this is a chess game
-
 # Chess Evolved Offline - CS247 Spring 2024
 
 ## Overview
