@@ -8,6 +8,6 @@ class Pawn : public Piece {
 public:
     char toChar() override;
     int getValue() override;
-    std::vector<PartialMove> getPossibleMoves() override; 
+    std::vector<PartialMove> getPossibleMoves() override;
 };
 #endif

@@ -6,7 +6,7 @@
 
 class Bishop : public Piece {
 public:
-    char toChar()  override;
+    char toChar() override;
     int getValue() override;
     std::vector<PartialMove> getPossibleMoves() override;
 };
