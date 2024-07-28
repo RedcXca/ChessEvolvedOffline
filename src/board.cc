@@ -21,7 +21,7 @@ void Board::undoMove() {
     // Promotion logic should be already covered by this, assuming the Game, not the Board, stores the smart pointers for the pieces
 }
 
-inline int signum(int x) { return x ? x < 0 ? -1 : 1 : 0; }
+inline int signum(int x) { return (x > 0) - (x < 0); }
 
 bool Board::checkBlocked(Position pos, int deltaX, int deltaY, bool attackable, Color otherSide) {
     for (int i = 1; i <= std::max(std::abs(deltaX), std::abs(deltaY))-1; ++i)
