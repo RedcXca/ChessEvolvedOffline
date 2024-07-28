@@ -121,9 +121,9 @@ void Board::makeMove(Move move) {
     }
 }
 
-std::list<Move> Board::generateLegalMoves(Color side) {
+std::vector<Move> Board::generateLegalMoves(Color side) {
     Color otherSide = side == Color::White ? Color::Black : Color::White;
-    std::list<Move> moves;
+    std::vector<Move> moves;
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
             if (board[i][j] && board[i][j]->getColor() == side) {
@@ -136,13 +136,11 @@ std::list<Move> Board::generateLegalMoves(Color side) {
                             if (!checkBlocked({j, i}, move.deltaX, move.deltaY)) {
                                 moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], nullptr, enPassantSquare));
                             }
-                        }
-                        if (move.type == MoveType::MoveOrAttack) {
+                        } else if (move.type == MoveType::MoveOrAttack) {
                             if (!checkBlocked({j, i}, move.deltaX, move.deltaY, true, otherSide)) {
                                 moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y][x], enPassantSquare));
                             }
-                        }
-                        if (move.type == MoveType::AttackOnly) {
+                        } else if (move.type == MoveType::AttackOnly) {
                             if (board[y][x] && board[y][x]->getColor() == otherSide) {
                                 if (!checkBlocked({j, i}, move.deltaX, move.deltaY, true, otherSide)) {
                                     moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y][x], enPassantSquare));
@@ -152,14 +150,11 @@ std::list<Move> Board::generateLegalMoves(Color side) {
                                     moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y + (side == Color::White ? -1 : 1)][x], enPassantSquare));
                                 }
                             }
-                        }
-                        if (move.type == MoveType::UnblockableMoveOrAttack) {
+                        } else if (move.type == MoveType::UnblockableMoveOrAttack) {
                             moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y][x], enPassantSquare));
-                        }
-                        if (move.type == MoveType::Teleport) {
+                        } else if (move.type == MoveType::Teleport) {
                             if (!board[y][x]) moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], nullptr, enPassantSquare));
-                        }
-                        if (move.type == MoveType::UnblockableAttackOnly) {
+                        } else if (move.type == MoveType::UnblockableAttackOnly) {
                             if (board[y][x] && board[y][x]->getColor() == otherSide) {
                                 moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y][x], enPassantSquare));
                             }
@@ -173,7 +168,7 @@ std::list<Move> Board::generateLegalMoves(Color side) {
                             moves.push_back(Move(Position(j, i), Position(j + 2, i), board[i][j], nullptr, enPassantSquare));
                         }
                     }
-                    if (!board[i][j - 1] && !board[i][j - 2] && board[i][j - 4] && std::tolower(board[i][j - 4]->toChar()) == 'r' && !board[i][j - 4]->getHasMoved()) {
+                    if (!board[i][j - 1] && !board[i][j - 2] && !board[i][j-3] && board[i][j - 4] && std::tolower(board[i][j - 4]->toChar()) == 'r' && !board[i][j - 4]->getHasMoved()) {
                         if (!checkThreatened(Position(j, i))[otherSide] && !checkThreatened(Position(j - 1, i))[otherSide] && !checkThreatened(Position(j - 2, i))[otherSide]) {
                             moves.push_back(Move(Position(j, i), Position(j - 2, i), board[i][j], nullptr, enPassantSquare));
                         }
@@ -182,14 +177,16 @@ std::list<Move> Board::generateLegalMoves(Color side) {
             }
         }
     }
+    std::vector<Move> legalMoves;
+    legalMoves.reserve(moves.size());
     for (auto move : moves) {
         testMove(move);
-        if (checkThreatened(kingPositions[side])[otherSide]) {
-            moves.remove(move);
+        if (validateBoard(side)) {
+            legalMoves.push_back(move);
         }
         undoMove();
     }
-    return moves;
+    return legalMoves;
 }
 
 bool Board::placePiece(Position pos, char piece) {

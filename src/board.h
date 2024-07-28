@@ -1,6 +1,5 @@
 #include "move.h"
 #include <vector>
-#include <list>
 #include <array>
 #include <map>
 #include "color.h"
@@ -14,7 +13,7 @@ struct Board {
     std::map<Color, int> checkThreatened(Position);
     bool validateBoard(Color side);
     void makeMove(Move);
-    std::list<Move> generateLegalMoves(Color side);
+    std::vector<Move> generateLegalMoves(Color side);
     bool placePiece(Position, char);
     char getState(Position) const;
 
