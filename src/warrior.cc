@@ -8,8 +8,8 @@ int Warrior::getValue() {
 }
 
 std::vector<PartialMove> Warrior::getPossibleMoves() {
-        std::vector<PartialMove> moves;
-        pushRookMoves(moves, 2, MoveType::MoveOrAttack);
-        pushBishopMoves(moves, 2, MoveType::MoveOrAttack);
-        return moves;
-    }
+    std::vector<PartialMove> moves;
+    pushRookMoves(moves, 2, MoveType::MoveOrAttack);
+    pushBishopMoves(moves, 2, MoveType::MoveOrAttack);
+    return moves;
+}

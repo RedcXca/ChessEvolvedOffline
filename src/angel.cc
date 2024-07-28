@@ -7,8 +7,8 @@ int Angel::getValue() {
     return 7;
 }
 std::vector<PartialMove> Angel::getPossibleMoves() {
-        std::vector<PartialMove> moves;
-        pushValkyrieMoves(moves, MoveType::UnblockableMoveOrAttack);
-        pushRookMoves(moves, 2, MoveType::MoveOrAttack);
-        return moves;
-    }
+    std::vector<PartialMove> moves;
+    pushValkyrieMoves(moves, MoveType::UnblockableMoveOrAttack);
+    pushRookMoves(moves, 2, MoveType::MoveOrAttack);
+    return moves;
+}
