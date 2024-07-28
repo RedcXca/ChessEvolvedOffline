@@ -1,4 +1,6 @@
 #include "board.h"
+#include <cmath>
+#include <algorithm>
 
 void Board::undoMove() {
     Move lastMove = history.back();
@@ -20,20 +22,29 @@ void Board::undoMove() {
     // Promotion logic should be already covered by this, assuming the Game, not the Board, stores the smart pointers for the pieces
 }
 
+inline int signum(int x) {
+    return x ? x < 0 ? -1 : 1 : 0;
+}
+
 std::map<Color, int> Board::checkThreatened(Position pos) {
     std::map<Color, int> threatened;
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
-            if (board[i][j]) {
-                std::vector<PartialMove> moves = board[i][j]->getPossibleMoves();
-                for (PartialMove move : moves) {
+    for (int i = 0; i < SIZE; i++)
+        for (int j = 0; j < SIZE; j++)
+            if (board[i][j])
+                for (auto move : board[i][j]->getPossibleMoves())
                     if (i + move.deltaY == pos.y && j + move.deltaX == pos.x) {
+                        if (move.type == MoveType::MoveOnly || move.type == MoveType::Teleport) continue;
+                        if (move.type == MoveType::AttackOnly || move.type == MoveType::MoveOrAttack) {
+                            bool blocked = false;
+                            for (int k = 1; k <= std::max(std::abs(move.deltaX), std::abs(move.deltaY)); ++k)
+                                if (board[i + k * signum(move.deltaX)][j + k * signum(move.deltaY)]) {
+                                    blocked = true;
+                                    break;
+                                }
+                            if (blocked) continue;
+                        }
                         threatened[board[i][j]->getColor()]++;
                     }
-                }
-            }
-        }
-    }
     return threatened;
 }
 
