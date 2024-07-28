@@ -16,6 +16,7 @@ struct Board {
     void makeMove(Move);
     std::list<Move> generateLegalMoves(Color side);
     bool placePiece(Position, char);
+    char getState(Position) const;
 
 private:
     std::vector<Move> history;

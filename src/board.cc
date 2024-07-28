@@ -193,7 +193,7 @@ std::list<Move> Board::generateLegalMoves(Color side) {
 bool Board::placePiece(Position pos, char piece) {
     if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return false;
     if (board[pos.y][pos.x]) return false;
-    Color color{std::islower(piece)};
+    Color color = std::isupper(piece) ? Color::White : Color::Black;
     switch (std::tolower(piece)) {
     case 'a':
         allPieces.push_back(std::make_unique<Angel>(color));
@@ -278,4 +278,10 @@ bool Board::placePiece(Position pos, char piece) {
     }
     board[pos.y][pos.x] = allPieces.back().get();
     return true;
+}
+
+char Board::getState(Position pos) const {
+    if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return ' ';
+    if (board[pos.y][pos.x]) return board[pos.y][pos.x]->toChar();
+    return ((pos.x + pos.y) % 2 ? ' ' : '_');
 }
