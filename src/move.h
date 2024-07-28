@@ -1,7 +1,7 @@
 #ifndef MOVE_H
 #define MOVE_H
 #include "position.h"
-#include "piece.h"
+#include "Piece.h"
 struct Move {
     Position from, to;
     Piece* originalPiece;
