@@ -24,7 +24,7 @@ void Board::undoMove() {
 inline int signum(int x) { return (x > 0) - (x < 0); }
 
 bool Board::checkBlocked(Position pos, int deltaX, int deltaY, bool attackable, Color otherSide) {
-    for (int i = 1; i <= std::max(std::abs(deltaX), std::abs(deltaY))-1; ++i)
+    for (int i = 1; i <= std::max(std::abs(deltaX), std::abs(deltaY)) - 1; ++i)
         if (board[pos.y + i * signum(deltaY)][pos.x + i * signum(deltaX)]) return true;
     if (board[pos.y + deltaY][pos.x + deltaX] && board[pos.y + deltaY][pos.x + deltaX]->getColor() == otherSide) return attackable;
     return false;
@@ -68,7 +68,7 @@ void Board::testMove(Move move) {
 }
 void Board::makeMove(Move move) {
     testMove(move);
-    //handle Promotion creation here
+    // handle Promotion creation here
 }
 
 std::list<Move> Board::generateLegalMoves(Color side) {
@@ -93,7 +93,7 @@ std::list<Move> Board::generateLegalMoves(Color side) {
                                     moves.push_back({{j, i}, {x, y}, board[i][j], board[y][x]});
                                 }
                             }
-                            if (move.type == MoveType::AttackOnly){
+                            if (move.type == MoveType::AttackOnly) {
                                 if (board[y][x] && board[y][x]->getColor() == otherSide) {
                                     if (!checkBlocked({j, i}, move.deltaX, move.deltaY, true, otherSide)) {
                                         moves.push_back({{j, i}, {x, y}, board[i][j], board[y][x]});
@@ -106,7 +106,7 @@ std::list<Move> Board::generateLegalMoves(Color side) {
                             if (move.type == MoveType::Teleport) {
                                 if (!board[y][x]) moves.push_back({{j, i}, {x, y}, board[i][j], nullptr});
                             }
-                            if (move.type == MoveType::UnblockableAttackOnly){
+                            if (move.type == MoveType::UnblockableAttackOnly) {
                                 if (board[y][x] && board[y][x]->getColor() == otherSide) {
                                     moves.push_back({{j, i}, {x, y}, board[i][j], board[y][x]});
                                 }
@@ -117,7 +117,7 @@ std::list<Move> Board::generateLegalMoves(Color side) {
             }
         }
     }
-    for (auto move:moves) {
+    for (auto move : moves) {
         testMove(move);
         if (checkThreatened(kingPositions[side])[otherSide]) {
             moves.remove(move);

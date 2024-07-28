@@ -3,7 +3,7 @@ BasedOnStyle: LLVM
 IndentWidth: 4
 UseTab: Never
 SortIncludes: false
-ColumnLimit: 300
+ColumnLimit: 0
 AllowShortBlocksOnASingleLine: true
 AllowShortLoopsOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: true
