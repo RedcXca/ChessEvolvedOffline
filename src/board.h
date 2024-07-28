@@ -22,7 +22,7 @@ private:
     std::array<std::array<Piece*, SIZE>, SIZE> board;
     std::map<Color, Position> kingPositions;
     std::vector<std::unique_ptr<Piece>> allPieces;
-    Position enPassantSquare;
+    Position enPassantSquare{-1, -1};
     bool checkBlocked(Position, int deltaX, int deltaY, bool attackable = false, Color otherSide = Color::White);
     void testMove(Move move);
 };

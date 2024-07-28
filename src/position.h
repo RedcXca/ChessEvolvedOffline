@@ -5,7 +5,7 @@ struct Position {
     int x, y;
     std::string toString();
     Position(int x, int y) : x(x), y(y) {}
-    bool operator==(Position &other){
+    bool operator==(const Position& other) const {
         return x == other.x && y == other.y;
     };
 };

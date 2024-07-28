@@ -31,30 +31,33 @@
 void Board::undoMove() {
     Move lastMove = history.back();
     history.pop_back();
-    board[lastMove.from.y][lastMove.from.x] = lastMove.originalPiece;
+    board[lastMove.from.y][lastMove.from.x] = lastMove.originalPiece; // reset original piece
     if (lastMove.originalPiece->toChar() != board[lastMove.to.y][lastMove.to.x]->toChar()) {
         allPieces.pop_back(); // this means promotion went through, it's a move not a test
     }
-    if (lastMove.enPassantPos == lastMove.to) { lastMove.to.y += lastMove.originalPiece->getColor() == Color::White ? -1 : 1; }
+    if (lastMove.enPassantPos == lastMove.to) { lastMove.to.y += lastMove.originalPiece->getColor() == Color::White ? -1 : 1; } // adjust position of captured piece for en passant
     board[lastMove.to.y][lastMove.to.x] = lastMove.capturedPiece;
     if (std::tolower(lastMove.originalPiece->toChar()) == 'k') {
-        if (lastMove.to.x - lastMove.from.x == 2) {
-            board[lastMove.to.y][lastMove.to.x + 1] = board[lastMove.to.y][lastMove.to.x - 1];
-            board[lastMove.to.y][lastMove.to.x - 1] = nullptr;
-        } else if (lastMove.to.x - lastMove.from.x == -2) {
-            board[lastMove.to.y][lastMove.to.x - 2] = board[lastMove.to.y][lastMove.to.x + 1];
-            board[lastMove.to.y][lastMove.to.x + 1] = nullptr;
+        kingPositions[lastMove.originalPiece->getColor()] = lastMove.from;
+        if (lastMove.to.x - lastMove.from.x == 2) {                                            // O-O
+            board[lastMove.to.y][lastMove.to.x + 1] = board[lastMove.to.y][lastMove.to.x - 1]; // move rook back
+            board[lastMove.to.y][lastMove.to.x - 1] = nullptr;                                 // empty rook's previous location
+            board[lastMove.to.y][lastMove.to.x + 1]->setHasMoved(false);                       // reset rook's hasMoved
+        } else if (lastMove.to.x - lastMove.from.x == -2) {                                    // O-O-O
+            board[lastMove.to.y][lastMove.to.x - 2] = board[lastMove.to.y][lastMove.to.x + 1]; // move rook back
+            board[lastMove.to.y][lastMove.to.x + 1] = nullptr;                                 // empty rook's previous location
+            board[lastMove.to.y][lastMove.to.x - 2]->setHasMoved(false);                       // reset rook's hasMoved
         }
     }
-    if (lastMove.firstMove) lastMove.originalPiece->setHasMoved(false);
+    if (lastMove.firstMove) lastMove.originalPiece->setHasMoved(false); // reset hasMoved if it was the first move
 }
 
 inline int signum(int x) { return (x > 0) - (x < 0); }
 
 bool Board::checkBlocked(Position pos, int deltaX, int deltaY, bool attackable, Color otherSide) {
-    for (int i = 1; i <= std::max(std::abs(deltaX), std::abs(deltaY)) - 1; ++i)
+    for (int i = 1; i < std::max(std::abs(deltaX), std::abs(deltaY)); ++i) // go up to one before the target square
         if (board[pos.y + i * signum(deltaY)][pos.x + i * signum(deltaX)]) return true;
-    if (board[pos.y + deltaY][pos.x + deltaX] && board[pos.y + deltaY][pos.x + deltaX]->getColor() == otherSide) return attackable;
+    if (board[pos.y + deltaY][pos.x + deltaX] && board[pos.y + deltaY][pos.x + deltaX]->getColor() == otherSide) return !attackable; // there is a piece there to be attacked
     return false;
 }
 std::map<Color, int> Board::checkThreatened(Position pos) {
@@ -73,7 +76,7 @@ std::map<Color, int> Board::checkThreatened(Position pos) {
     return threatened;
 }
 
-bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions[side])[side]; }
+bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions[side])[Color(!int(side))]; }
 
 void Board::testMove(Move move) {
     history.push_back(move);
@@ -84,36 +87,35 @@ void Board::testMove(Move move) {
     }
     if (std::tolower(move.originalPiece->toChar()) == 'k') {
         kingPositions[move.originalPiece->getColor()] = move.to;
-        if (move.to.x - move.from.x == 2) {
+        if (move.to.x - move.from.x == 2) { // O-O
             board[move.to.y][move.to.x - 1] = board[move.to.y][move.to.x + 1];
             board[move.to.y][move.to.x + 1] = nullptr;
-        } else if (move.to.x - move.from.x == -2) {
+            board[move.to.y][move.to.x - 1]->setHasMoved(true);
+        } else if (move.to.x - move.from.x == -2) { // O-O-O
             board[move.to.y][move.to.x + 1] = board[move.to.y][move.to.x - 2];
             board[move.to.y][move.to.x - 2] = nullptr;
+            board[move.to.y][move.to.x + 1]->setHasMoved(true);
         }
     }
-    if (move.firstMove) move.originalPiece->setHasMoved(true);
+    move.originalPiece->setHasMoved(true);
 }
 void Board::makeMove(Move move) {
     testMove(move);
     if (std::tolower(move.originalPiece->toChar()) == 'p' && std::abs(move.to.y - move.from.y) == 2) {
         enPassantSquare = Position(move.to.x, move.to.y + (move.originalPiece->getColor() == Color::White ? -1 : 1));
     } else {
-        enPassantSquare = Position(-1, -1);
+        enPassantSquare = Position(-1, -1); // default en passant square
     }
     if (move.promotionPiece == 'Q') {
         allPieces.push_back(std::make_unique<Queen>(move.originalPiece->getColor()));
         board[move.to.y][move.to.x] = allPieces.back().get();
-    }
-    if (move.promotionPiece == 'R') {
+    } else if (move.promotionPiece == 'R') {
         allPieces.push_back(std::make_unique<Rook>(move.originalPiece->getColor()));
         board[move.to.y][move.to.x] = allPieces.back().get();
-    }
-    if (move.promotionPiece == 'B') {
+    } else if (move.promotionPiece == 'B') {
         allPieces.push_back(std::make_unique<Bishop>(move.originalPiece->getColor()));
         board[move.to.y][move.to.x] = allPieces.back().get();
-    }
-    if (move.promotionPiece == 'N') {
+    } else if (move.promotionPiece == 'N') {
         allPieces.push_back(std::make_unique<Knight>(move.originalPiece->getColor()));
         board[move.to.y][move.to.x] = allPieces.back().get();
     }
