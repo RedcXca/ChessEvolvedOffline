@@ -10,11 +10,15 @@ char Game::getState(Position p) const {
     return board.getState(p);
 }
 
+static inline bool isPawn(Piece* piece) {
+    return piece && std::tolower(piece->toChar()) == 'p';
+}
+
 void Game::setup() {
     for (int x = 0; x < Board::SIZE; ++x)
         for (int y = 0; y < Board::SIZE; ++y)
             board.removePiece(Position{x, y});
-    for (std::string command, piece, square; std::cin >> command && command != "done";) {
+    for (std::string command, piece, square; std::cin >> command;) {
         try {
             if (command == "+") {
                 std::cin >> piece >> square;
@@ -30,8 +34,18 @@ void Game::setup() {
                     board.setColor(Color::Black);
                 else
                     std::cerr << "Invalid color\n";
-            } else
-                std::cerr << "Invalid setup command.\n";
+            } else if (command == "done") {
+                std::map<char, int> pieceCount;
+                for (auto& piece : board.allPieces) ++pieceCount[piece->toChar()];
+                bool badPawn = false;
+                for (int x = 0; x < Board::SIZE; ++x)
+                    badPawn |= isPawn(board.board[Board::SIZE - 1][x]) || isPawn(board.board[0][x]);
+                if (pieceCount['k'] != 1) std::cerr << "There must be exactly 1 white king.\n";
+                else if (pieceCount['K'] != 1) std::cerr << "There must be exactly 1 black king.\n";
+                else if (badPawn) std::cerr << "No pawns may be on the first or last row of the board.\n";
+                else if (board.checkThreatened(board.kingPositions.at(Color::White))[Color::Black] || board.checkThreatened(board.kingPositions.at(Color::Black))[Color::White]) std::cerr << "Neither king must be in check.\n";
+                else break;
+            } else std::cerr << "Invalid setup command.\n";
         } catch (const ChessException& ce) {
             std::cerr << ce.what() << '\n';
         }
@@ -65,8 +79,13 @@ void Game::play(std::map<Color, std::string> players) {
                     bool works = false;
                     for (auto legalMove : board.generateLegalMoves())
                         if (legalMove.from == move.from && legalMove.to == move.to) {
-                            works = true;
-                            board.makeMove(legalMove);
+                            if (legalMove.promotionPiece && !move.promotion)
+                                std::cerr << "Promotion piece not specified.\n";
+                            else if (!legalMove.promotionPiece && move.promotion)
+                                std::cerr << "Invalid specification of promotion piece.\n";
+                            else if (works = legalMove.promotionPiece == move.promotion)
+                                board.makeMove(legalMove);
+                            else continue;
                             break;
                         }
                     if (works) {

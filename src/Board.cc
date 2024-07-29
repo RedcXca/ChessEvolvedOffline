@@ -205,11 +205,22 @@ const std::vector<Move>& Board::generateLegalMoves() {
             legalMoves.push_back(move);
         }
         undoMove();
+        std::vector<Move> currMoves;
+        if (std::tolower(move.originalPiece->toChar()) == 'p' && move.to.y == (move.originalPiece->getColor() == Color::White ? 7 : 0)) {
+            for (char promotion : PROMOTION_CHOICES) {
+                move.promotionPiece = promotion;
+                currMoves.push_back(move);
+            }
+        } else currMoves.push_back(move);
+        for (auto currMove : currMoves) {
+            makeMove(currMove);
+            if (validateBoard(getNextColor(currColor))) {
+                if (!validateBoard(currColor)) currMove.check = true;
+                legalMoves.push_back(currMove);
+            }
+            undoMove();
+        }
     }
-    std::cout << kingPositions.at(currColor).x << " " << kingPositions.at(currColor).y << std::endl;
-    std::cout << checkThreatened(kingPositions.at(currColor))[Color::White] << " " << checkThreatened(kingPositions.at(currColor))[Color::Black] << std::endl;
-     std::string c;
-        std::cin >> c;
     return legalMoves;
 }
 
