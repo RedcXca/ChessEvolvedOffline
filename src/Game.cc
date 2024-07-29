@@ -8,10 +8,6 @@ char Game::getState(Position p) const {
     return board.getState(p);
 }
 
-const Board& Game::getBoard() const {
-    return board;
-}
-
 void Game::setup() {
     // TODO
     for (std::string command, piece, square; std::cin >> command && command != "done";) {

@@ -11,7 +11,6 @@ private:
 public:
     Game();
     char getState(Position p) const;
-    const Board& getBoard() const;
     void setup();
 };
 
