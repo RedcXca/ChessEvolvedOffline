@@ -43,7 +43,7 @@ void Game::setup() {
                 if (pieceCount['k'] != 1) std::cerr << "There must be exactly 1 white king.\n";
                 else if (pieceCount['K'] != 1) std::cerr << "There must be exactly 1 black king.\n";
                 else if (badPawn) std::cerr << "No pawns may be on the first or last row of the board.\n";
-                else if (board.checkThreatened(board.kingPositions.at(Color::White))[Color::Black] || board.checkThreatened(board.kingPositions.at(Color::Black))[Color::White]) std::cerr << "Neither king must be in check.\n";
+                else if (!board.validateBoard(Color::White) || !board.validateBoard(Color::Black)) std::cerr << "Neither king must be in check.\n";
                 else break;
             } else std::cerr << "Invalid setup command.\n";
         } catch (const ChessException& ce) {
@@ -83,26 +83,25 @@ void Game::play(std::map<Color, std::string> players) {
                                 std::cerr << "Promotion piece not specified.\n";
                             else if (!legalMove.promotionPiece && move.promotion)
                                 std::cerr << "Invalid specification of promotion piece.\n";
-                            else if (works = legalMove.promotionPiece == move.promotion)
+                            else if (works = legalMove.promotionPiece == move.promotion) {
                                 board.makeMove(legalMove);
-                            else continue;
+                                notifyObservers();
+                                auto nextLegalMoves = board.generateLegalMoves();
+                                if (legalMove.check) {
+                                    if (nextLegalMoves.empty()) {
+                                        std::cout << "Checkmate! " << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
+                                        scores[Board::getNextColor(board.getSide())] += 2;
+                                    } else
+                                        std::cout << getColorName(board.getSide()) << " is in check.\n";
+                                } else if (nextLegalMoves.empty()) {
+                                    std::cout << "Stalemate!\n";
+                                    for (auto& [color, score] : scores) ++score;
+                                    break;
+                                }
+                            } else continue;
                             break;
                         }
-                    if (works) {
-                        notifyObservers();
-                        auto nextLegalMoves = board.generateLegalMoves();
-                        if (board.checkThreatened(board.kingPositions.at(board.getSide()))[Board::getNextColor(board.getSide())]) {
-                            if (nextLegalMoves.empty()) {
-                                std::cout << "Checkmate! " << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
-                                scores[Board::getNextColor(board.getSide())] += 2;
-                            } else
-                                std::cout << getColorName(board.getSide()) << " is in check.\n";
-                        } else if (nextLegalMoves.empty()) {
-                            std::cout << "Stalemate!\n";
-                            for (auto& [color, score] : scores) ++score;
-                            break;
-                        }
-                    } else std::cerr << "Illegal move.\n";
+                    if (!works) std::cerr << "Illegal move.\n";
                 }
             } else std::cerr << "Invalid command!\n";
         } catch (const ChessException& ce) {
