@@ -78,7 +78,7 @@ bool Board::checkBlocked(Position pos, int deltaX, int deltaY, bool attackable, 
 }
 
 std::map<Color, int> Board::checkThreatened(Position pos) {
-    std::map<Color, int> threatened;
+    std::map<Color, int> threatened{{Color::White, 0}, {Color::Black, 0}};
     for (int i = 0; i < SIZE; i++)
         for (int j = 0; j < SIZE; j++)
             if (board[i][j])
