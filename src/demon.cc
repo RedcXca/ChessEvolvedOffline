@@ -9,4 +9,5 @@ std::vector<PartialMove> Demon::getPossibleMoves() {
     std::vector<PartialMove> moves;
     pushKnightMoves(moves, MoveType::Teleport);
     pushRookMoves(moves, 4, MoveType::MoveOrAttack);
+    return moves;
 }
