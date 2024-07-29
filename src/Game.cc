@@ -65,7 +65,7 @@ void Game::play(std::map<Color, std::string> players) {
                 else if (board.board[move.from.y][move.from.x]->getColor() != board.getSide()) std::cerr << "Cannot move opponent's piece.\n";
                 else {
                     bool works = false;
-                    for (auto legalMove : board.generateLegalMoves(board.getSide()))
+                    for (auto legalMove : board.generateLegalMoves())
                         if (legalMove.from == move.from && legalMove.to == move.to) {
                             works = true;
                             board.makeMove(legalMove);
@@ -73,7 +73,7 @@ void Game::play(std::map<Color, std::string> players) {
                         }
                     if (works) {
                         notifyObservers();
-                        auto nextLegalMoves = board.generateLegalMoves(board.getSide());
+                        auto nextLegalMoves = board.generateLegalMoves();
                         if (board.checkThreatened(board.kingPositions.at(board.getSide()))[getOppositeColor(board.getSide())]) {
                             if (nextLegalMoves.empty()) {
                                 std::cout << "Checkmate! " << getColorName(getOppositeColor(board.getSide())) << " wins!\n";

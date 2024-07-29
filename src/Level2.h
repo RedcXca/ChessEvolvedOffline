@@ -1,6 +1,6 @@
 #include "Computer.h"
 
-struct Level1 : Computer {
+struct Level2 : Computer {
     MoveInput getNextMove(Board&) override;
     using Computer::Computer;
 };

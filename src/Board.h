@@ -15,7 +15,8 @@ struct Board {
     Board(const std::string& fileName = "initialState.txt");
     bool validateBoard(Color side);
     std::map<Color, int> checkThreatened(Position);
-    std::vector<Move> generateLegalMoves(Color side);
+    const std::vector<Move>& generateLegalMoves();
+    const std::vector<Move>& getLegalMoves();
     void makeMove(Move);
     void undoMove();
     char getState(Position) const;
@@ -23,6 +24,7 @@ struct Board {
 
 private:
     std::vector<Move> history;
+    std::vector<Move> legalMoves;
     std::array<std::array<Piece*, SIZE>, SIZE> board{};
     std::map<Color, Position> kingPositions;
     std::vector<std::unique_ptr<Piece>> allPieces;

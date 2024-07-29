@@ -133,12 +133,12 @@ void Board::makeMove(Move move) {
     }
 }
 
-std::vector<Move> Board::generateLegalMoves(Color side) {
-    Color otherSide = side == Color::White ? Color::Black : Color::White;
+const std::vector<Move>& Board::generateLegalMoves() {
+    Color otherSide = currColor == Color::White ? Color::Black : Color::White;
     std::vector<Move> moves;
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
-            if (board[i][j] && board[i][j]->getColor() == side) {
+            if (board[i][j] && board[i][j]->getColor() == currColor) {
                 auto possibleMoves = board[i][j]->getPossibleMoves();
                 for (auto move : possibleMoves) {
                     int x = j + move.deltaX;
@@ -159,7 +159,7 @@ std::vector<Move> Board::generateLegalMoves(Color side) {
                                 }
                             } else if (std::tolower(board[i][j]->toChar()) == 'p') {
                                 if (enPassantSquare == Position(x, y)) {
-                                    moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y + (side == Color::White ? -1 : 1)][x], enPassantSquare));
+                                    moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y + (currColor == Color::White ? -1 : 1)][x], enPassantSquare));
                                 }
                             }
                         } else if (move.type == MoveType::UnblockableMoveOrAttack) {
@@ -189,16 +189,20 @@ std::vector<Move> Board::generateLegalMoves(Color side) {
             }
         }
     }
-    std::vector<Move> legalMoves;
+    legalMoves.clear();
     legalMoves.reserve(moves.size());
     for (auto move : moves) {
         makeMove(move);
-        if (validateBoard(side)) {
+        if (validateBoard(currColor)) {
             if (!validateBoard(otherSide)) move.check = true;
             legalMoves.push_back(move);
         }
         undoMove();
     }
+    return legalMoves;
+}
+
+const std::vector<Move>& Board::getLegalMoves() {
     return legalMoves;
 }
 
