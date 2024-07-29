@@ -2,6 +2,7 @@
 #define HUMANPLAYER_H
 #include "Player.h"
 struct HumanPlayer : Player {
-    MoveInput getNextMove(const Board&, Color) override;
+    MoveInput getNextMove(const Board&) override;
+    using Player::Player;
 };
 #endif

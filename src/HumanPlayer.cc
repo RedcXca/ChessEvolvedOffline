@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include "ChessException.h"
-MoveInput HumanPlayer::getNextMove(const Board& board, Color myColor) {
+MoveInput HumanPlayer::getNextMove(const Board& board) {
     std::string line, start, end;
     getline(std::cin, line);
     std::istringstream ss{line};
