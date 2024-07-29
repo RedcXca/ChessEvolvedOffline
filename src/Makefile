@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-std=c++14 -pedantic -Wall -Wextra -g -MMD
+CXXFLAGS=-std=c++17 -pedantic -Wall -Wextra -g -MMD
 EXEC=chess
 CCFILES=$(wildcard *.cc)
 OBJECTS=${CCFILES:.cc=.o}

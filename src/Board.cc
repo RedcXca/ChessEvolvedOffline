@@ -33,11 +33,10 @@
 Board::Board(const std::string& fileName) {
     std::ifstream file(fileName);
     std::string line;
-    int y = 0;
     for (int y = 0; std::getline(file, line); ++y) {
         int x = 0;
         for (char c : line) {
-            if (c != ' ') placePiece(Position(x, y), c);
+            if (c != ' ') placePiece(Position(x, SIZE - 1 - y), c);
             ++x;
         }
     }
@@ -45,7 +44,7 @@ Board::Board(const std::string& fileName) {
 
 inline int signum(int x) { return (x > 0) - (x < 0); }
 
-bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions[side])[Color(!int(side))]; }
+bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions.at(side))[Color(!int(side))]; }
 
 void Board::undoMove() {
     Move lastMove = history.back();
@@ -57,7 +56,7 @@ void Board::undoMove() {
     if (lastMove.enPassantPos == lastMove.to) { lastMove.to.y += lastMove.originalPiece->getColor() == Color::White ? -1 : 1; } // adjust position of captured piece for en passant
     board[lastMove.to.y][lastMove.to.x] = lastMove.capturedPiece;
     if (std::tolower(lastMove.originalPiece->toChar()) == 'k') {
-        kingPositions[lastMove.originalPiece->getColor()] = lastMove.from;
+        kingPositions.insert_or_assign(lastMove.originalPiece->getColor(), lastMove.from);
         if (lastMove.to.x - lastMove.from.x == 2) {                                            // O-O
             board[lastMove.to.y][lastMove.to.x + 1] = board[lastMove.to.y][lastMove.to.x - 1]; // move rook back
             board[lastMove.to.y][lastMove.to.x - 1] = nullptr;                                 // empty rook's previous location
@@ -89,7 +88,7 @@ std::map<Color, int> Board::checkThreatened(Position pos) {
                         if (move.type == MoveType::AttackOnly || move.type == MoveType::MoveOrAttack) {
                             if (checkBlocked({j, i}, move.deltaX, move.deltaY)) continue;
                         }
-                        threatened[board[i][j]->getColor()]++;
+                        threatened.at(board[i][j]->getColor())++;
                     }
     return threatened;
 }
@@ -102,7 +101,7 @@ void Board::testMove(Move move) {
         board[move.to.y + (move.originalPiece->getColor() == Color::White ? -1 : 1)][move.to.x] = nullptr;
     }
     if (std::tolower(move.originalPiece->toChar()) == 'k') {
-        kingPositions[move.originalPiece->getColor()] = move.to;
+        kingPositions.insert_or_assign(move.originalPiece->getColor(), move.to);
         if (move.to.x - move.from.x == 2) { // O-O
             board[move.to.y][move.to.x - 1] = board[move.to.y][move.to.x + 1];
             board[move.to.y][move.to.x + 1] = nullptr;
@@ -115,6 +114,7 @@ void Board::testMove(Move move) {
     }
     move.originalPiece->setHasMoved(true);
 }
+
 void Board::makeMove(Move move) {
     testMove(move);
     if (std::tolower(move.originalPiece->toChar()) == 'p' && std::abs(move.to.y - move.from.y) == 2) {
@@ -180,12 +180,12 @@ std::vector<Move> Board::generateLegalMoves(Color side) {
                 if (std::tolower(board[i][j]->toChar()) == 'k') {
                     if (board[i][j]->getHasMoved()) continue;
                     if (!board[i][j + 1] && !board[i][j + 2] && board[i][j + 3] && std::tolower(board[i][j + 3]->toChar()) == 'r' && !board[i][j + 3]->getHasMoved()) {
-                        if (!checkThreatened(Position(j, i))[otherSide] && !checkThreatened(Position(j + 1, i))[otherSide] && !checkThreatened(Position(j + 2, i))[otherSide]) {
+                        if (!checkThreatened(Position(j, i)).at(otherSide) && !checkThreatened(Position(j + 1, i)).at(otherSide) && !checkThreatened(Position(j + 2, i)).at(otherSide)) {
                             moves.push_back(Move(Position(j, i), Position(j + 2, i), board[i][j], nullptr, enPassantSquare));
                         }
                     }
                     if (!board[i][j - 1] && !board[i][j - 2] && !board[i][j - 3] && board[i][j - 4] && std::tolower(board[i][j - 4]->toChar()) == 'r' && !board[i][j - 4]->getHasMoved()) {
-                        if (!checkThreatened(Position(j, i))[otherSide] && !checkThreatened(Position(j - 1, i))[otherSide] && !checkThreatened(Position(j - 2, i))[otherSide]) {
+                        if (!checkThreatened(Position(j, i)).at(otherSide) && !checkThreatened(Position(j - 1, i)).at(otherSide) && !checkThreatened(Position(j - 2, i)).at(otherSide)) {
                             moves.push_back(Move(Position(j, i), Position(j - 2, i), board[i][j], nullptr, enPassantSquare));
                         }
                     }
@@ -242,7 +242,7 @@ bool Board::placePiece(Position pos, char piece) {
         break;
     case 'k':
         allPieces.push_back(std::make_unique<King>(color));
-        kingPositions[color] = pos;
+        kingPositions.insert_or_assign(color, pos);
         break;
     case 'l':
         allPieces.push_back(std::make_unique<Legionary>(color));
@@ -299,7 +299,7 @@ bool Board::placePiece(Position pos, char piece) {
 char Board::getState(Position pos) const {
     if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return ' ';
     if (board[pos.y][pos.x]) return board[pos.y][pos.x]->toChar();
-    return ((pos.x + pos.y) % 2 ? ' ' : '_');
+    return ((pos.x + pos.y) % 2 ? '_' : ' ');
 }
 
 void Board::removePiece(Position pos) {
