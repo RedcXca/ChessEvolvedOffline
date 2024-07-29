@@ -285,3 +285,7 @@ char Board::getState(Position pos) const {
     if (board[pos.y][pos.x]) return board[pos.y][pos.x]->toChar();
     return ((pos.x + pos.y) % 2 ? ' ' : '_');
 }
+
+void Board::setColor(Color c) {
+    currColor = c;
+}
