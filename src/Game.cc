@@ -4,6 +4,7 @@
 #include "ChessException.h"
 #include "HumanPlayer.h"
 #include <memory>
+#include "color.h"
 
 char Game::getState(Position p) const {
     return board.getState(p);
@@ -51,14 +52,11 @@ void Game::play(std::map<Color, std::string> players) {
     std::map<Color, std::unique_ptr<Player>> actualPlayers;
     for (auto& [color, type] : players)
         actualPlayers.emplace(color, getPlayer(type, color));
-    auto getOppositeColor = [](Color c) {
-        return c == Color::White ? Color::Black : Color::White;
-    };
     notifyObservers();
     for (std::string command; std::cin >> command;) {
         try {
             if (command == "resign") {
-                std::cout << getColorName(getOppositeColor(board.getSide())) << " wins!\n";
+                std::cout << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
             } else if (command == "move") {
                 auto move = actualPlayers[board.getSide()]->getNextMove(board);
                 if (!board.board[move.from.y][move.from.x]) std::cerr << "No piece at from square.\n";
@@ -74,10 +72,10 @@ void Game::play(std::map<Color, std::string> players) {
                     if (works) {
                         notifyObservers();
                         auto nextLegalMoves = board.generateLegalMoves();
-                        if (board.checkThreatened(board.kingPositions.at(board.getSide()))[getOppositeColor(board.getSide())]) {
+                        if (board.checkThreatened(board.kingPositions.at(board.getSide()))[Board::getNextColor(board.getSide())]) {
                             if (nextLegalMoves.empty()) {
-                                std::cout << "Checkmate! " << getColorName(getOppositeColor(board.getSide())) << " wins!\n";
-                                scores[getOppositeColor(board.getSide())] += 2;
+                                std::cout << "Checkmate! " << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
+                                scores[Board::getNextColor(board.getSide())] += 2;
                             } else
                                 std::cout << getColorName(board.getSide()) << " is in check.\n";
                         } else if (nextLegalMoves.empty()) {
