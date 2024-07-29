@@ -2,11 +2,7 @@
 #include "Game.h"
 #include <iostream>
 
-TextObserver::TextObserver(Subject* s)
-    : Observer(s) {}
-
 void TextObserver::update() {
-    auto game = dynamic_cast<Game*>(subject);
     if (!game) return;
 
     for (int i = Board::SIZE - 1; i >= 0; i--) {

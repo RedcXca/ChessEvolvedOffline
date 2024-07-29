@@ -1,10 +1,10 @@
 #include "Observer.h"
-#include "Subject.h"
+#include "Game.h"
 
-Observer::Observer(Subject* s) : subject{s} {
-    subject->attach(this);
+Observer::Observer(Game* g) : game{g} {
+    game->attach(this);
 };
 
 Observer::~Observer() {
-    subject->detach(this);
+    game->detach(this);
 }

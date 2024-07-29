@@ -1,13 +1,13 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
-class Subject;
+class Game;
 
 class Observer {
 protected:
-    Subject* subject;
+    Game* game;
 
 public:
-    Observer(Subject* s);
+    Observer(Game* g);
     virtual void update() = 0;
     virtual ~Observer();
 };

@@ -1,13 +1,13 @@
 #ifndef GRAPHICSOBSERVER_H
 #define GRAPHICSOBSERVER_H
 #include "Observer.h"
-#include "Subject.h"
+#include "Game.h"
 #include "Window.h"
 
 struct GraphicsObserver : Observer {
     // TODO: Xwindow window;
-    GraphicsObserver(Subject*);
     void update();
+    using Observer::Observer;
 };
 
 #endif
