@@ -5,6 +5,7 @@
 #include "TextObserver.h"
 #include "GraphicObserver.h"
 #include "Subject.h"
+#include "ChessException.h"
 
 int main() {
     Game game;
@@ -12,23 +13,20 @@ int main() {
     // GraphicsObserver graphicsObserver(&game);
     // game.attach(&graphicsObserver);
 
-    game.notifyObservers();
+    // game.notifyObservers();
 
-    // bool activeGame = false;
-    // for (std::string command; std::cin >> command;) {
-    //     if (command == "game") {
-    //         if (activeGame)
-    //             std::cerr << "There is already an active game.\n";
-    //         else {
-    //             activeGame = true;
-    //         }
-    //     } else if (command == "setup") {
-    //         if (activeGame)
-    //             std::cerr << "There is already an active game.\n";
-    //         else {
-    //             game.setup();
-    //         }
-    //     } else
-    //         std::cerr << "Invalid command!\n";
-    // }
+    for (std::string command; std::cin >> command;) {
+        try {
+            if (std::string player1, player2; command == "game") {
+                std::cin >> player1 >> player2;
+                game.play({{Color::White, player1}, {Color::Black, player2}});
+            } else if (command == "setup")
+                game.setup();
+            else
+                std::cerr << "Invalid command!\n";
+        } catch (const ChessException& ce) {
+            std::cerr << ce.what() << '\n';
+        }
+    }
+    game.reportResults();
 }
