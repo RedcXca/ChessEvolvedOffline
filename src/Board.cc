@@ -68,6 +68,7 @@ void Board::undoMove() {
         }
     }
     if (lastMove.firstMove) lastMove.originalPiece->setHasMoved(false); // reset hasMoved if it was the first move
+    currColor = getNextColor(currColor);
 }
 
 bool Board::checkBlocked(Position pos, int deltaX, int deltaY, bool attackable, Color otherSide) {
@@ -131,10 +132,11 @@ void Board::makeMove(Move move) {
         allPieces.push_back(std::make_unique<Knight>(move.originalPiece->getColor()));
         board[move.to.y][move.to.x] = allPieces.back().get();
     }
+    currColor = getNextColor(currColor);
 }
 
 const std::vector<Move>& Board::generateLegalMoves() {
-    Color otherSide = currColor == Color::White ? Color::Black : Color::White;
+    Color otherSide = getNextColor(currColor);
     std::vector<Move> moves;
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
