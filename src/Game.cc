@@ -65,8 +65,13 @@ void Game::play(std::map<Color, std::string> players) {
                     bool works = false;
                     for (auto legalMove : board.generateLegalMoves())
                         if (legalMove.from == move.from && legalMove.to == move.to) {
-                            works = true;
-                            board.makeMove(legalMove);
+                            if (legalMove.promotionPiece && !move.promotion)
+                                std::cerr << "Promotion piece not specified.\n";
+                            else if (!legalMove.promotionPiece && move.promotion)
+                                std::cerr << "Invalid specification of promotion piece.\n";
+                            else if (works = legalMove.promotionPiece == move.promotion)
+                                board.makeMove(legalMove);
+                            else continue;
                             break;
                         }
                     if (works) {

@@ -199,18 +199,26 @@ const std::vector<Move>& Board::generateLegalMoves() {
     legalMoves.reserve(moves.size());
     for (auto move : moves) {
         std::cout << "Trying move from " << move.from.x << " " << move.from.y << " to " << move.to.x << " " << move.to.y << " with original piece " << move.originalPiece->toChar() << " and captured piece " << (move.capturedPiece ? move.capturedPiece->toChar() : ' ') << std::endl;
-        makeMove(move);
-        printBoard();
-        if (validateBoard(currColor)) {
-            if (!validateBoard(otherSide)) move.check = true;
-            legalMoves.push_back(move);
-            std::cout << "Move is legal" << std::endl;
-        } else
-            std::cout << "Move is illegal" << std::endl;
-        undoMove();
-        std::cout << "Undoing move" << std::endl;
-        printBoard();
-       
+        std::vector<Move> currMoves;
+        if (std::tolower(move.originalPiece->toChar()) == 'p' && move.to.y == (move.originalPiece->getColor() == Color::White ? 7 : 0)) {
+            for (char promotion : PROMOTION_CHOICES) {
+                move.promotionPiece = promotion;
+                currMoves.push_back(move);
+            }
+        } else currMoves.push_back(move);
+        for (auto currMove : currMoves) {
+            makeMove(currMove);
+            printBoard();
+            if (validateBoard(currColor)) {
+                if (!validateBoard(otherSide)) currMove.check = true;
+                legalMoves.push_back(currMove);
+                std::cout << "Move is legal" << std::endl;
+            } else
+                std::cout << "Move is illegal" << std::endl;
+            undoMove();
+            std::cout << "Undoing move" << std::endl;
+            printBoard();
+        }
     }
      std::string c;
         std::cin >> c;
