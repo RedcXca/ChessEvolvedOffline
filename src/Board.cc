@@ -99,6 +99,7 @@ std::map<Color, int> Board::checkThreatened(Position pos) {
     return threatened;
 }
 
+// assumes move is legal
 void Board::makeMove(Move move) {
     history.push_back(move);
     board[move.to.y][move.to.x] = move.originalPiece;

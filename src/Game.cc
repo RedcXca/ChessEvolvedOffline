@@ -115,5 +115,5 @@ void Game::play(std::map<Color, std::string> players) {
 void Game::reportResults() const {
     std::cout << "Final Score:\n";
     for (auto& [color, score] : scores)
-        std::cout << getColorName(color) << ": " << (score / 2) << (score & 1 ? ".5" : "") << '\n';
+        std::cout << getColorName(color) << ": " << (score / 2) << (score & 1 ? ".5" : "") << '\n'; // avoiding double for precision
 }
