@@ -5,6 +5,9 @@
 #include "HumanPlayer.h"
 #include <memory>
 #include "color.h"
+#include "ComputerLevel1.h"
+#include "ComputerLevel2.h"
+#include "ComputerLevel3.h"
 
 char Game::getState(Position p) const {
     return board.getState(p);
@@ -53,8 +56,11 @@ void Game::setup() {
 }
 
 Player* getPlayer(std::string playerType, Color c) {
-    if (playerType == "human") return new HumanPlayer{c};
-    // TODO: handle computers
+    if (playerType == "human") return new HumanPlayer;
+    if (playerType == "computer1") return new ComputerLevel1{c};
+    if (playerType == "computer2") return new ComputerLevel2{c};
+    if (playerType == "computer3") return new ComputerLevel3{c};
+    // TODO: handle computer level 4
     throw ChessException{"Invalid player type."};
 }
 
