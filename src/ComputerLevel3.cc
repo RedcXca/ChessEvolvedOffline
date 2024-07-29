@@ -1,6 +1,7 @@
-#include "Level2.h"
+#include "ComputerLevel3.h"
 
-MoveInput Level2::getNextMove(Board& board) {
+// TODO: UNIMPLEMENTED
+MoveInput ComputerLevel3::getNextMove(Board& board) {
     auto& moves = board.getLegalMoves();
     std::vector<Move> priorityMoves;
     priorityMoves.reserve(moves.size());
