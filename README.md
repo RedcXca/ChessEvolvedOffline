@@ -1,4 +1,4 @@
-# Chess Evolved Offline - CS247 Spring 2024
+# ChessEvolvedOffline - CS247 Spring 2024
 
 ## Overview
 
@@ -13,7 +13,7 @@ For example, take a look at the piece "Ross Evans":
 
 ## Features
 
-- Chess Evolved Offline supports human vs human, human vs computer, and computer vs computer games.
+- ChessEvolvedOffline supports human vs human, human vs computer, and computer vs computer games.
 - Computer players have multiple difficulty levels:
   - Level 1: Random legal moves.
   - Level 2: Prefers capturing moves and checks.
