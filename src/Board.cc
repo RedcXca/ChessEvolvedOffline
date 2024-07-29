@@ -30,8 +30,7 @@
 #include "wyvern.h"
 #include "zebra.h"
 
-Board::Board() {}
-Board::Board(std::string fileName) {
+Board::Board(const std::string& fileName) {
     std::ifstream file(fileName);
     std::string line;
     int y = 0;
@@ -43,6 +42,11 @@ Board::Board(std::string fileName) {
         }
     }
 }
+
+inline int signum(int x) { return (x > 0) - (x < 0); }
+
+bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions[side])[Color(!int(side))]; }
+
 void Board::undoMove() {
     Move lastMove = history.back();
     history.pop_back();
@@ -67,14 +71,13 @@ void Board::undoMove() {
     if (lastMove.firstMove) lastMove.originalPiece->setHasMoved(false); // reset hasMoved if it was the first move
 }
 
-inline int signum(int x) { return (x > 0) - (x < 0); }
-
 bool Board::checkBlocked(Position pos, int deltaX, int deltaY, bool attackable, Color otherSide) {
     for (int i = 1; i < std::max(std::abs(deltaX), std::abs(deltaY)); ++i) // go up to one before the target square
         if (board[pos.y + i * signum(deltaY)][pos.x + i * signum(deltaX)]) return true;
     if (board[pos.y + deltaY][pos.x + deltaX] && board[pos.y + deltaY][pos.x + deltaX]->getColor() == otherSide) return !attackable; // there is a piece there to be attacked
     return false;
 }
+
 std::map<Color, int> Board::checkThreatened(Position pos) {
     std::map<Color, int> threatened;
     for (int i = 0; i < SIZE; i++)
@@ -90,8 +93,6 @@ std::map<Color, int> Board::checkThreatened(Position pos) {
                     }
     return threatened;
 }
-
-bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions[side])[Color(!int(side))]; }
 
 void Board::testMove(Move move) {
     history.push_back(move);
@@ -183,7 +184,7 @@ std::vector<Move> Board::generateLegalMoves(Color side) {
                             moves.push_back(Move(Position(j, i), Position(j + 2, i), board[i][j], nullptr, enPassantSquare));
                         }
                     }
-                    if (!board[i][j - 1] && !board[i][j - 2] && !board[i][j-3] && board[i][j - 4] && std::tolower(board[i][j - 4]->toChar()) == 'r' && !board[i][j - 4]->getHasMoved()) {
+                    if (!board[i][j - 1] && !board[i][j - 2] && !board[i][j - 3] && board[i][j - 4] && std::tolower(board[i][j - 4]->toChar()) == 'r' && !board[i][j - 4]->getHasMoved()) {
                         if (!checkThreatened(Position(j, i))[otherSide] && !checkThreatened(Position(j - 1, i))[otherSide] && !checkThreatened(Position(j - 2, i))[otherSide]) {
                             moves.push_back(Move(Position(j, i), Position(j - 2, i), board[i][j], nullptr, enPassantSquare));
                         }

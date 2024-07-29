@@ -2,9 +2,7 @@
 #include <iostream>
 #include <string>
 
-Game::Game() {
-   // TODO
-}
+Game::Game() : board() {}
 
 char Game::getState(Position p) const {
     return board.getState(p);
@@ -25,9 +23,13 @@ void Game::setup() {
             board.removePiece(Position{square});
         } else if (std::string color; command == "=") {
             std::cin >> color;
-            if (color == "white") board.setColor(Color::White);
-            else if (color == "black") board.setColor(Color::Black);
-            else std::cerr << "Invalid color\n";
-        } else std::cerr << "Invalid setup command.\n";
+            if (color == "white")
+                board.setColor(Color::White);
+            else if (color == "black")
+                board.setColor(Color::Black);
+            else
+                std::cerr << "Invalid color\n";
+        } else
+            std::cerr << "Invalid setup command.\n";
     }
 }

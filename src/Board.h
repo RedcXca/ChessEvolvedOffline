@@ -10,15 +10,13 @@
 struct Board {
     friend class Game;
     static inline constexpr int SIZE = 8;
-    Board();
-    Board(std::string fileName = "initialState.txt");
+    Board(const std::string& fileName = "initialState.txt");
+    bool validateBoard(Color side);
     void undoMove();
     std::map<Color, int> checkThreatened(Position);
-    bool validateBoard(Color side);
     void makeMove(Move);
     std::vector<Move> generateLegalMoves(Color side);
     char getState(Position) const;
-
 
 private:
     std::vector<Move> history;
