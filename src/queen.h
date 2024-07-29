@@ -1,6 +1,6 @@
 #ifndef QUEEN_H
 #define QUEEN_H
-#include "piece.h"
+#include "Piece.h"
 
 // Classic chess queen
 

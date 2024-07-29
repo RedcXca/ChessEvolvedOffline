@@ -1,6 +1,6 @@
 #ifndef KING_H
 #define KING_H
-#include "piece.h"
+#include "Piece.h"
 
 // Classic chess king. Protect him well.
 

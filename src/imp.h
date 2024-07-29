@@ -1,7 +1,7 @@
 #ifndef IMP_H
 #define IMP_H
 
-#include "piece.h"
+#include "Piece.h"
 
 // Imp is dangerous on a single column of attack, but it can be a bit awkward to get on the right one
 

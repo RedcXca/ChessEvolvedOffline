@@ -1,6 +1,6 @@
 #ifndef WARRIOR_H
 #define WARRIOR_H
-#include "piece.h"
+#include "Piece.h"
 
 // Strong, resilient, simple. The Warrior can always be relied on to get the job done.
 

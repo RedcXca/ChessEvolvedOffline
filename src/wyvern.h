@@ -1,6 +1,6 @@
 #ifndef WYVERN_H
 #define WYVERN_H
-#include "piece.h"
+#include "Piece.h"
 
 // Wyvern is agile and eternally tricky with its teleports
 

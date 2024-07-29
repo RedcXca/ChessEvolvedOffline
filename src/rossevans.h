@@ -1,6 +1,6 @@
 #ifndef ROSS_EVANS_H
 #define ROSS_EVANS_H
-#include "piece.h"
+#include "Piece.h"
 
 // The man, the myth, the legend, the strongest piece in the game
 

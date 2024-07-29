@@ -1,6 +1,6 @@
 #ifndef UNICORN_H
 #define UNICORN_H
-#include "piece.h"
+#include "Piece.h"
 
 // Which is better, bishop or knight? "Why not both?" answers Unicorn
 

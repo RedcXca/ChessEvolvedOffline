@@ -1,6 +1,6 @@
 #ifndef ANGEL_H
 #define ANGEL_H
-#include "piece.h"
+#include "Piece.h"
 
 // Angel is a strong, mobile piece with high checkmating potential
 

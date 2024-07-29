@@ -1,6 +1,6 @@
 #ifndef LEGIONARY_H
 #define LEGIONARY_H
-#include "piece.h"
+#include "Piece.h"
 
 // Legionary is very slow to move, but very deadly on defense
 

@@ -1,6 +1,6 @@
 #ifndef AXEMAN_H
 #define AXEMAN_H
-#include "piece.h"
+#include "Piece.h"
 
 // Axeman is a more defensive, shorter ranged bishop that can swap color complexes
 

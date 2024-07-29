@@ -1,6 +1,6 @@
 #ifndef ROOK_H
 #define ROOK_H
-#include "piece.h"
+#include "Piece.h"
 
 // Classic chess rook
 

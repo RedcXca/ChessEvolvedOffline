@@ -1,6 +1,6 @@
 #ifndef ORC_H
 #define ORC_H
-#include "piece.h"
+#include "Piece.h"
 
 // Simple, effective moveset: a king is surprisingly powerful when it cannot be checked
 

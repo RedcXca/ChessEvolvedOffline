@@ -1,6 +1,6 @@
 #ifndef DEMON_H
 #define DEMON_H
-#include "piece.h"
+#include "Piece.h"
 
 // Demon trades off some of the higher range of a rook for knight teleports
 

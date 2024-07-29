@@ -1,6 +1,6 @@
 #ifndef ZEBRA_H
 #define ZEBRA_H
-#include "piece.h"
+#include "Piece.h"
 
 // Zebra moves are immensely tricky to predict, but in the right hands their reach is devastating
 

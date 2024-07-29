@@ -1,6 +1,6 @@
 #ifndef GHOST_H
 #define GHOST_H
-#include "piece.h"
+#include "Piece.h"
 
 // Color-bound and double-bound, the Ghost is tricky to maneuver but can deliver devasting forks
 

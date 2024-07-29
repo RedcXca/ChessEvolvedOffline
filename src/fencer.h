@@ -1,6 +1,6 @@
 #ifndef FENCER_H
 #define FENCER_H
-#include "piece.h"
+#include "Piece.h"
 
 // Fencer has the ability to teleport deep into enemy lines, posing dangerous threats
 

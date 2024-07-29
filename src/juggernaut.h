@@ -1,6 +1,6 @@
 #ifndef JUGGERNAUT_H
 #define JUGGERNAUT_H
-#include "piece.h"
+#include "Piece.h"
 
 // A dangerous piece with tons of power at close range. Watch your king next to this piece!
 

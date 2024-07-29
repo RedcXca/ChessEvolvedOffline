@@ -1,6 +1,6 @@
 #ifndef COUGAR_H
 #define COUGAR_H
-#include "piece.h"
+#include "Piece.h"
 
 // Unpredictable piece with few threat squares, but very tricky mobility and ability to infiltrate
 

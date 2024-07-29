@@ -1,6 +1,6 @@
 #ifndef PAWN_H
 #define PAWN_H
-#include "piece.h"
+#include "Piece.h"
 
 // Classic chess pawn
 

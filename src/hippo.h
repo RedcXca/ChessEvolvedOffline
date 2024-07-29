@@ -1,6 +1,6 @@
 #ifndef HIPPO_H
 #define HIPPO_H
-#include "piece.h"
+#include "Piece.h"
 
 // A very dangerous defensive piece, Hippo has very slow movement, unless provoked
 

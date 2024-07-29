@@ -1,6 +1,6 @@
 #ifndef SHINOBI_H
 #define SHINOBI_H
-#include "piece.h"
+#include "Piece.h"
 
 // Shinobi is a very tricky piece that is easy to get checkmated by if you're not careful.
 

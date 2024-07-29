@@ -1,6 +1,6 @@
 #ifndef VALKYRIE_H
 #define VALKYRIE_H
-#include "piece.h"
+#include "Piece.h"
 
 // Tricky to maneuver, devastating when maneuvered correctly
 

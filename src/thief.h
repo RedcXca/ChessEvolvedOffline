@@ -1,6 +1,6 @@
 #ifndef THIEF_H
 #define THIEF_H
-#include "piece.h"
+#include "Piece.h"
 
 // Watch your back with this guy, he can show up out of nowhere and stab you in the back
 
