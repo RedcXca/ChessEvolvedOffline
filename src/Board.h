@@ -27,7 +27,6 @@ private:
     Position enPassantSquare{-1, -1};
     Color currColor{};
     bool checkBlocked(Position, int deltaX, int deltaY, bool attackable = false, Color otherSide = Color::White);
-    void testMove(Move move);
     bool placePiece(Position, char);
     void removePiece(Position);
     void setColor(Color);

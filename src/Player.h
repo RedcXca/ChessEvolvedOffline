@@ -4,10 +4,10 @@
 #include "board.h"
 #include "color.h"
 class Player {
+protected:
     Color color;
-
 public:
     Player(Color color) : color(color) {}
-    virtual MoveInput getNextMove(const Board&) = 0;
+    virtual MoveInput getNextMove(Board&) = 0;
 };
 #endif

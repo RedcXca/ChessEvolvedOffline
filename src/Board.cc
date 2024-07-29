@@ -93,7 +93,7 @@ std::map<Color, int> Board::checkThreatened(Position pos) {
     return threatened;
 }
 
-void Board::testMove(Move move) {
+void Board::makeMove(Move move) {
     history.push_back(move);
     board[move.to.y][move.to.x] = move.originalPiece;
     board[move.from.y][move.from.x] = nullptr;
@@ -113,10 +113,6 @@ void Board::testMove(Move move) {
         }
     }
     move.originalPiece->setHasMoved(true);
-}
-
-void Board::makeMove(Move move) {
-    testMove(move);
     if (std::tolower(move.originalPiece->toChar()) == 'p' && std::abs(move.to.y - move.from.y) == 2) {
         enPassantSquare = Position(move.to.x, move.to.y + (move.originalPiece->getColor() == Color::White ? -1 : 1));
     } else {
@@ -196,8 +192,9 @@ std::vector<Move> Board::generateLegalMoves(Color side) {
     std::vector<Move> legalMoves;
     legalMoves.reserve(moves.size());
     for (auto move : moves) {
-        testMove(move);
+        makeMove(move);
         if (validateBoard(side)) {
+            if (!validateBoard(otherSide)) move.check = true;
             legalMoves.push_back(move);
         }
         undoMove();
