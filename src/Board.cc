@@ -200,12 +200,6 @@ const std::vector<Move>& Board::generateLegalMoves() {
     legalMoves.clear();
     legalMoves.reserve(moves.size());
     for (auto move : moves) {
-        makeMove(move);
-        if (validateBoard(getNextColor(currColor))) {
-            if (!validateBoard(currColor)) move.check = true;
-            legalMoves.push_back(move);
-        }
-        undoMove();
         std::vector<Move> currMoves;
         if (std::tolower(move.originalPiece->toChar()) == 'p' && move.to.y == (move.originalPiece->getColor() == Color::White ? 7 : 0)) {
             for (char promotion : PROMOTION_CHOICES) {
