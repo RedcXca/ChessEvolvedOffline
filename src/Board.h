@@ -17,6 +17,7 @@ struct Board {
     void makeMove(Move);
     void undoMove();
     char getState(Position) const;
+    Color getSide() const;
 
 private:
     std::vector<Move> history;

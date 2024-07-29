@@ -314,3 +314,7 @@ void Board::removePiece(Position pos) {
 void Board::setColor(Color c) {
     currColor = c;
 }
+
+Color Board::getSide() const {
+    return currColor;
+}
