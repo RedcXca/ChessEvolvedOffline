@@ -318,7 +318,7 @@ bool Board::placePiece(Position pos, char piece) {
 char Board::getState(Position pos) const {
     if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return ' ';
     if (board[pos.y][pos.x]) return board[pos.y][pos.x]->toChar();
-    return ((pos.x + pos.y) % 2 ? '_' : ' ');
+    return ' ';
 }
 
 void Board::removePiece(Position pos) {

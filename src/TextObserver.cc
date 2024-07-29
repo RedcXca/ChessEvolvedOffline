@@ -8,7 +8,10 @@ void TextObserver::update() {
     for (int i = Board::SIZE - 1; i >= 0; i--) {
         std::cout << i + 1 << "  ";
         for (int j = 0; j < Board::SIZE; j++) {
-            std::cout << game->getState(Position(j, i)) << ' ';
+            char state = game->getState(Position(j, i));
+            if (state == ' ')
+                state = ((j + i) % 2 == 0) ? ' ' : '_';
+            std::cout << state << ' ';
         }
         std::cout << std::endl;
     }
