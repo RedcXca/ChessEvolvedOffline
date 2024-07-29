@@ -1,7 +1,8 @@
+#ifndef COMPUTERPLAYER_H
+#define COMPUTERPLAYER_H
 #include "color.h"
 #include "Player.h"
 #include <random>
-
 struct ComputerPlayer : Player {
     ComputerPlayer(Color color) : color{color} {}
 
@@ -13,3 +14,4 @@ protected:
         return {randMove.from, randMove.to, randMove.promotionPiece};
     }
 };
+#endif
