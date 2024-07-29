@@ -56,7 +56,7 @@ void Game::play(std::map<Color, std::string> players) {
     for (std::string command; std::cin >> command;) {
         try {
             if (command == "resign") {
-                std::cout << getColorName(getNextColor(board.getSide())) << " wins!\n";
+                std::cout << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
             } else if (command == "move") {
                 auto move = actualPlayers[board.getSide()]->getNextMove(board);
                 if (!board.board[move.from.y][move.from.x]) std::cerr << "No piece at from square.\n";
@@ -72,10 +72,10 @@ void Game::play(std::map<Color, std::string> players) {
                     if (works) {
                         notifyObservers();
                         auto nextLegalMoves = board.generateLegalMoves();
-                        if (board.checkThreatened(board.kingPositions.at(board.getSide()))[getNextColor(board.getSide())]) {
+                        if (board.checkThreatened(board.kingPositions.at(board.getSide()))[Board::getNextColor(board.getSide())]) {
                             if (nextLegalMoves.empty()) {
-                                std::cout << "Checkmate! " << getColorName(getNextColor(board.getSide())) << " wins!\n";
-                                scores[getNextColor(board.getSide())] += 2;
+                                std::cout << "Checkmate! " << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
+                                scores[Board::getNextColor(board.getSide())] += 2;
                             } else
                                 std::cout << getColorName(board.getSide()) << " is in check.\n";
                         } else if (nextLegalMoves.empty()) {

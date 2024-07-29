@@ -21,6 +21,9 @@ struct Board {
     void undoMove();
     char getState(Position) const;
     Color getSide() const;
+    static inline Color getNextColor(Color color) {
+        return Color(int(color) ^ 1); // can be generalized for more colors
+    }
 
 private:
     std::vector<Move> history;
