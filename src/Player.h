@@ -3,7 +3,11 @@
 #include "MoveInput.h"
 #include "board.h"
 #include "color.h"
-struct Player {
-    virtual MoveInput getNextMove(const Board&, Color) = 0;
+class Player {
+    Color color;
+
+public:
+    Player(Color color) : color(color) {}
+    virtual MoveInput getNextMove(const Board&) = 0;
 };
 #endif
