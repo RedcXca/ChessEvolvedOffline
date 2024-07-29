@@ -1,6 +1,8 @@
 #include "Board.h"
 #include <cmath>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 #include "angel.h"
 #include "axeman.h"
 #include "bishop.h"
@@ -28,6 +30,19 @@
 #include "wyvern.h"
 #include "zebra.h"
 
+Board::Board() {}
+Board::Board(std::string fileName) {
+    std::ifstream file(fileName);
+    std::string line;
+    int y = 0;
+    for (int y = 0; std::getline(file, line); ++y) {
+        int x = 0;
+        for (char c : line) {
+            if (c != ' ') placePiece(Position(x, y), c);
+            ++x;
+        }
+    }
+}
 void Board::undoMove() {
     Move lastMove = history.back();
     history.pop_back();
@@ -284,6 +299,15 @@ char Board::getState(Position pos) const {
     if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return ' ';
     if (board[pos.y][pos.x]) return board[pos.y][pos.x]->toChar();
     return ((pos.x + pos.y) % 2 ? ' ' : '_');
+}
+
+void Board::removePiece(Position pos) {
+    if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return;
+    if (board[pos.y][pos.x]) {
+        auto it = std::find_if(allPieces.begin(), allPieces.end(), [&](const auto& p) { return p.get() == board[pos.y][pos.x]; });
+        if (it != allPieces.end()) allPieces.erase(it);
+        board[pos.y][pos.x] = nullptr;
+    }
 }
 
 void Board::setColor(Color c) {
