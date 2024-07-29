@@ -44,7 +44,7 @@ Board::Board(const std::string& fileName) {
 
 inline int signum(int x) { return (x > 0) - (x < 0); }
 
-bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions.at(side))[Color(!int(side))]; }
+bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions.at(side))[getNextColor(side)]; }
 
 void Board::undoMove() {
     Move lastMove = history.back();
@@ -82,8 +82,9 @@ bool Board::checkBlocked(Position pos, int deltaX, int deltaY, bool attackable, 
     return false;
 }
 
+// Returns the number of pieces threatening the given position for each color
 std::map<Color, int> Board::checkThreatened(Position pos) {
-    std::map<Color, int> threatened{{Color::White, 0}, {Color::Black, 0}};
+    std::map<Color, int> threatened;
     for (int i = 0; i < SIZE; i++)
         for (int j = 0; j < SIZE; j++)
             if (board[i][j])
@@ -91,9 +92,9 @@ std::map<Color, int> Board::checkThreatened(Position pos) {
                     if (i + move.deltaY == pos.y && j + move.deltaX == pos.x) {
                         if (move.type == MoveType::MoveOnly || move.type == MoveType::Teleport) continue;
                         if (move.type == MoveType::AttackOnly || move.type == MoveType::MoveOrAttack) {
-                            if (checkBlocked({j, i}, move.deltaX, move.deltaY)) continue;
+                            if (checkBlocked({j, i}, move.deltaX, move.deltaY, true, getNextColor(board[i][j]->getColor()))) continue;
                         }
-                        threatened.at(board[i][j]->getColor())++;
+                        threatened[board[i][j]->getColor()]++;
                     }
     return threatened;
 }
@@ -182,12 +183,12 @@ const std::vector<Move>& Board::generateLegalMoves() {
                 if (std::tolower(board[i][j]->toChar()) == 'k') {
                     if (board[i][j]->getHasMoved()) continue;
                     if (!board[i][j + 1] && !board[i][j + 2] && board[i][j + 3] && std::tolower(board[i][j + 3]->toChar()) == 'r' && !board[i][j + 3]->getHasMoved()) {
-                        if (!checkThreatened(Position(j, i)).at(otherSide) && !checkThreatened(Position(j + 1, i)).at(otherSide) && !checkThreatened(Position(j + 2, i)).at(otherSide)) {
+                        if (!checkThreatened(Position(j, i))[otherSide] && !checkThreatened(Position(j + 1, i))[otherSide] && !checkThreatened(Position(j + 2, i))[otherSide]) {
                             moves.push_back(Move(Position(j, i), Position(j + 2, i), board[i][j], nullptr, enPassantSquare));
                         }
                     }
                     if (!board[i][j - 1] && !board[i][j - 2] && !board[i][j - 3] && board[i][j - 4] && std::tolower(board[i][j - 4]->toChar()) == 'r' && !board[i][j - 4]->getHasMoved()) {
-                        if (!checkThreatened(Position(j, i)).at(otherSide) && !checkThreatened(Position(j - 1, i)).at(otherSide) && !checkThreatened(Position(j - 2, i)).at(otherSide)) {
+                        if (!checkThreatened(Position(j, i))[otherSide] && !checkThreatened(Position(j - 1, i))[otherSide] && !checkThreatened(Position(j - 2, i))[otherSide]) {
                             moves.push_back(Move(Position(j, i), Position(j - 2, i), board[i][j], nullptr, enPassantSquare));
                         }
                     }
@@ -198,20 +199,15 @@ const std::vector<Move>& Board::generateLegalMoves() {
     legalMoves.clear();
     legalMoves.reserve(moves.size());
     for (auto move : moves) {
-        std::cout << "Trying move from " << move.from.x << " " << move.from.y << " to " << move.to.x << " " << move.to.y << " with original piece " << move.originalPiece->toChar() << " and captured piece " << (move.capturedPiece ? move.capturedPiece->toChar() : ' ') << std::endl;
         makeMove(move);
-        printBoard();
-        if (validateBoard(currColor)) {
-            if (!validateBoard(otherSide)) move.check = true;
+        if (validateBoard(getNextColor(currColor))) {
+            if (!validateBoard(currColor)) move.check = true;
             legalMoves.push_back(move);
-            std::cout << "Move is legal" << std::endl;
-        } else
-            std::cout << "Move is illegal" << std::endl;
+        }
         undoMove();
-        std::cout << "Undoing move" << std::endl;
-        printBoard();
-       
     }
+    std::cout << kingPositions.at(currColor).x << " " << kingPositions.at(currColor).y << std::endl;
+    std::cout << checkThreatened(kingPositions.at(currColor))[Color::White] << " " << checkThreatened(kingPositions.at(currColor))[Color::Black] << std::endl;
      std::string c;
         std::cin >> c;
     return legalMoves;
