@@ -55,8 +55,8 @@ void Board::undoMove() {
     }
     if (lastMove.enPassantPos == lastMove.to && std::tolower(lastMove.originalPiece->toChar()) == 'p') {
         board[lastMove.to.y][lastMove.to.x] = nullptr;
-        lastMove.to.y += lastMove.originalPiece->getColor() == Color::White ? -1 : 1; 
-        } // adjust position of captured piece for en passant
+        lastMove.to.y += lastMove.originalPiece->getColor() == Color::White ? -1 : 1;
+    } // adjust position of captured piece for en passant
     board[lastMove.to.y][lastMove.to.x] = lastMove.capturedPiece;
     if (std::tolower(lastMove.originalPiece->toChar()) == 'k') {
         kingPositions.insert_or_assign(lastMove.originalPiece->getColor(), lastMove.from);
@@ -212,7 +212,8 @@ const std::vector<Move>& Board::generateLegalMoves() {
                 move.promotionPiece = promotion;
                 currMoves.push_back(move);
             }
-        } else currMoves.push_back(move);
+        } else
+            currMoves.push_back(move);
         for (auto currMove : currMoves) {
             makeMove(currMove);
             if (validateBoard(getNextColor(currColor))) {
