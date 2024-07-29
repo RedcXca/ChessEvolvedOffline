@@ -9,6 +9,8 @@
 #include <memory>
 #include <string>
 
+#include <iostream>
+
 struct Board {
     friend class Game;
     static inline constexpr int SIZE = 8;
@@ -24,7 +26,14 @@ struct Board {
     static inline Color getNextColor(Color color) {
         return Color(int(color) ^ 1); // can be generalized for more colors
     }
-
+    void printBoard() {
+        for (int i = SIZE - 1; i >= 0; i--) {
+            for (int j = 0; j < SIZE; j++) {
+                std::cout << (board[i][j] ? board[i][j]->toChar() : ' ');
+            }
+            std::cout << std::endl;
+        }
+    }
 private:
     std::vector<Move> history;
     std::vector<Move> legalMoves;

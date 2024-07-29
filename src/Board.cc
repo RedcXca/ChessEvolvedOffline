@@ -53,7 +53,10 @@ void Board::undoMove() {
     if (lastMove.originalPiece->toChar() != board[lastMove.to.y][lastMove.to.x]->toChar()) {
         allPieces.pop_back(); // this means promotion went through, it's a move not a test
     }
-    if (lastMove.enPassantPos == lastMove.to) { lastMove.to.y += lastMove.originalPiece->getColor() == Color::White ? -1 : 1; } // adjust position of captured piece for en passant
+    if (lastMove.enPassantPos == lastMove.to && std::tolower(lastMove.originalPiece->toChar()) == 'p') {
+        board[lastMove.to.y][lastMove.to.x] = nullptr;
+        lastMove.to.y += lastMove.originalPiece->getColor() == Color::White ? -1 : 1; 
+        } // adjust position of captured piece for en passant
     board[lastMove.to.y][lastMove.to.x] = lastMove.capturedPiece;
     if (std::tolower(lastMove.originalPiece->toChar()) == 'k') {
         kingPositions.insert_or_assign(lastMove.originalPiece->getColor(), lastMove.from);
@@ -69,12 +72,13 @@ void Board::undoMove() {
     }
     if (lastMove.firstMove) lastMove.originalPiece->setHasMoved(false); // reset hasMoved if it was the first move
     currColor = getNextColor(currColor);
+    enPassantSquare = lastMove.enPassantPos;
 }
 
 bool Board::checkBlocked(Position pos, int deltaX, int deltaY, bool attackable, Color otherSide) {
     for (int i = 1; i < std::max(std::abs(deltaX), std::abs(deltaY)); ++i) // go up to one before the target square
         if (board[pos.y + i * signum(deltaY)][pos.x + i * signum(deltaX)]) return true;
-    if (board[pos.y + deltaY][pos.x + deltaX] && board[pos.y + deltaY][pos.x + deltaX]->getColor() == otherSide) return !attackable; // there is a piece there to be attacked
+    if (board[pos.y + deltaY][pos.x + deltaX]) return !attackable || board[pos.y + deltaY][pos.x + deltaX]->getColor() != otherSide; // there is a piece there to be attacked
     return false;
 }
 
@@ -98,7 +102,7 @@ void Board::makeMove(Move move) {
     history.push_back(move);
     board[move.to.y][move.to.x] = move.originalPiece;
     board[move.from.y][move.from.x] = nullptr;
-    if (move.enPassantPos == move.to) {
+    if (move.enPassantPos == move.to && std::tolower(move.originalPiece->toChar()) == 'p') {
         board[move.to.y + (move.originalPiece->getColor() == Color::White ? -1 : 1)][move.to.x] = nullptr;
     }
     if (std::tolower(move.originalPiece->toChar()) == 'k') {
@@ -165,7 +169,7 @@ const std::vector<Move>& Board::generateLegalMoves() {
                                 }
                             }
                         } else if (move.type == MoveType::UnblockableMoveOrAttack) {
-                            moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y][x], enPassantSquare));
+                            if (!board[y][x] || board[y][x]->getColor() == otherSide) moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y][x], enPassantSquare));
                         } else if (move.type == MoveType::Teleport) {
                             if (!board[y][x]) moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], nullptr, enPassantSquare));
                         } else if (move.type == MoveType::UnblockableAttackOnly) {
@@ -194,13 +198,22 @@ const std::vector<Move>& Board::generateLegalMoves() {
     legalMoves.clear();
     legalMoves.reserve(moves.size());
     for (auto move : moves) {
+        std::cout << "Trying move from " << move.from.x << " " << move.from.y << " to " << move.to.x << " " << move.to.y << " with original piece " << move.originalPiece->toChar() << " and captured piece " << (move.capturedPiece ? move.capturedPiece->toChar() : ' ') << std::endl;
         makeMove(move);
+        printBoard();
         if (validateBoard(currColor)) {
             if (!validateBoard(otherSide)) move.check = true;
             legalMoves.push_back(move);
-        }
+            std::cout << "Move is legal" << std::endl;
+        } else
+            std::cout << "Move is illegal" << std::endl;
         undoMove();
+        std::cout << "Undoing move" << std::endl;
+        printBoard();
+       
     }
+     std::string c;
+        std::cin >> c;
     return legalMoves;
 }
 
