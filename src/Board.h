@@ -1,3 +1,5 @@
+#ifndef BOARD_H
+#define BOARD_H
 #include "move.h"
 #include <vector>
 #include <array>
@@ -31,3 +33,4 @@ private:
     void removePiece(Position);
     void setColor(Color);
 };
+#endif
