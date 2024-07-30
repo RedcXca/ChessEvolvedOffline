@@ -5,7 +5,7 @@
 #include <map>
 class Game : public Subject {
     Board board;
-    std::map<Color, int> scores;
+    std::map<Color, int> scores{{Color::White, 0}, {Color::Black, 0}};
 
 public:
     char getState(Position p) const;
