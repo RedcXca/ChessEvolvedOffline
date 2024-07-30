@@ -1,5 +1,6 @@
 {
     "files.eol": "\n",
     "files.insertFinalNewline": true,
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "on",
+    "C_Cpp.default.cppStandard": "c++20"
 }
