@@ -14,10 +14,6 @@ char Game::getState(Position p) const {
     return board.getState(p);
 }
 
-static inline bool isPawn(Piece* piece) {
-    return piece && std::tolower(piece->toChar()) == 'p';
-}
-
 void Game::setup() {
     for (int x = 0; x < Board::SIZE; ++x)
         for (int y = 0; y < Board::SIZE; ++y)
@@ -43,7 +39,7 @@ void Game::setup() {
                 for (auto& piece : board.allPieces) ++pieceCount[piece->toChar()];
                 bool badPawn = false;
                 for (int x = 0; x < Board::SIZE; ++x)
-                    badPawn |= isPawn(board.board[Board::SIZE - 1][x]) || isPawn(board.board[0][x]);
+                    badPawn |= Board::isPiece(board.board[Board::SIZE - 1][x], 'p') || Board::isPiece(board.board[0][x], 'p');
                 if (pieceCount['k'] != 1) std::cerr << "There must be exactly 1 black king.\n";
                 else if (pieceCount['K'] != 1) std::cerr << "There must be exactly 1 white king.\n";
                 else if (badPawn) std::cerr << "No pawns may be on the first or last row of the board.\n";

@@ -53,12 +53,12 @@ void Board::undoMove() {
     if (lastMove.originalPiece->toChar() != board[lastMove.to.y][lastMove.to.x]->toChar()) {
         allPieces.pop_back(); // this means promotion went through, it's a move not a test
     }
-    if (lastMove.enPassantPos == lastMove.to && std::tolower(lastMove.originalPiece->toChar()) == 'p') {
+    if (lastMove.enPassantPos == lastMove.to && isPiece(lastMove.originalPiece, 'p')) {
         board[lastMove.to.y][lastMove.to.x] = nullptr;
         lastMove.to.y += lastMove.originalPiece->getColor() == Color::White ? -1 : 1;
     } // adjust position of captured piece for en passant
     board[lastMove.to.y][lastMove.to.x] = lastMove.capturedPiece;
-    if (std::tolower(lastMove.originalPiece->toChar()) == 'k') {
+    if (isPiece(lastMove.originalPiece, 'k')) {
         kingPositions.insert_or_assign(lastMove.originalPiece->getColor(), lastMove.from);
         if (lastMove.to.x - lastMove.from.x == 2) {                                            // O-O
             board[lastMove.to.y][lastMove.to.x + 1] = board[lastMove.to.y][lastMove.to.x - 1]; // move rook back
@@ -104,10 +104,10 @@ void Board::makeMove(Move move) {
     history.push_back(move);
     board[move.to.y][move.to.x] = move.originalPiece;
     board[move.from.y][move.from.x] = nullptr;
-    if (move.enPassantPos == move.to && std::tolower(move.originalPiece->toChar()) == 'p') {
+    if (move.enPassantPos == move.to && isPiece(move.originalPiece, 'p')) {
         board[move.to.y + (move.originalPiece->getColor() == Color::White ? -1 : 1)][move.to.x] = nullptr;
     }
-    if (std::tolower(move.originalPiece->toChar()) == 'k') {
+    if (isPiece(move.originalPiece, 'k')) {
         kingPositions.insert_or_assign(move.originalPiece->getColor(), move.to);
         if (move.to.x - move.from.x == 2) { // O-O
             board[move.to.y][move.to.x - 1] = board[move.to.y][move.to.x + 1];
@@ -120,7 +120,7 @@ void Board::makeMove(Move move) {
         }
     }
     move.originalPiece->setHasMoved(true);
-    if (std::tolower(move.originalPiece->toChar()) == 'p' && std::abs(move.to.y - move.from.y) == 2) {
+    if (isPiece(move.originalPiece, 'p') && std::abs(move.to.y - move.from.y) == 2) {
         enPassantSquare = Position(move.to.x, move.to.y + (move.originalPiece->getColor() == Color::White ? -1 : 1));
     } else {
         enPassantSquare = Position(-1, -1); // default en passant square
@@ -165,7 +165,7 @@ const std::vector<Move>& Board::generateLegalMoves() {
                                 if (!checkBlocked({j, i}, move.deltaX, move.deltaY, true, otherSide)) {
                                     moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y][x], enPassantSquare));
                                 }
-                            } else if (std::tolower(board[i][j]->toChar()) == 'p') {
+                            } else if (isPiece(board[i][j], 'p')) {
                                 if (enPassantSquare == Position(x, y)) {
                                     moves.push_back(Move(Position(j, i), Position(x, y), board[i][j], board[y + (currColor == Color::White ? -1 : 1)][x], enPassantSquare));
                                 }
@@ -181,7 +181,7 @@ const std::vector<Move>& Board::generateLegalMoves() {
                         }
                     }
                 }
-                if (std::tolower(board[i][j]->toChar()) == 'k') {
+                if (isPiece(board[i][j], 'k')) {
                     if (board[i][j]->getHasMoved()) continue;
                     if (!board[i][j + 1] && !board[i][j + 2] && board[i][j + 3] && std::tolower(board[i][j + 3]->toChar()) == 'r' && !board[i][j + 3]->getHasMoved()) {
                         if (!checkThreatened(Position(j, i))[otherSide] && !checkThreatened(Position(j + 1, i))[otherSide] && !checkThreatened(Position(j + 2, i))[otherSide]) {
@@ -201,7 +201,7 @@ const std::vector<Move>& Board::generateLegalMoves() {
     legalMoves.reserve(moves.size());
     for (auto move : moves) {
         std::vector<Move> currMoves;
-        if (std::tolower(move.originalPiece->toChar()) == 'p' && move.to.y == (move.originalPiece->getColor() == Color::White ? 7 : 0)) {
+        if (isPiece(move.originalPiece, 'p') && move.to.y == (move.originalPiece->getColor() == Color::White ? 7 : 0)) {
             for (char promotion : PROMOTION_CHOICES) {
                 move.promotionPiece = promotion;
                 currMoves.push_back(move);
@@ -265,7 +265,7 @@ bool Board::placePiece(Position pos, char piece) {
         break;
     case 'k':
         allPieces.push_back(std::make_unique<King>(color));
-        kingPositions.insert_or_assign(color, pos);
+        kingPositions.insert_or_assign(color, pos); //initialize king pos
         break;
     case 'l':
         allPieces.push_back(std::make_unique<Legionary>(color));

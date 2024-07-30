@@ -26,6 +26,9 @@ struct Board {
     static inline Color getNextColor(Color color) {
         return Color(int(color) ^ 1); // can be generalized for more colors
     }
+    static inline bool isPiece(Piece* piece, char p) {
+        return piece && std::tolower(piece->toChar()) == p;
+    }
     void printBoard() {
         for (int i = SIZE - 1; i >= 0; i--) {
             for (int j = 0; j < SIZE; j++) {
@@ -34,6 +37,7 @@ struct Board {
             std::cout << std::endl;
         }
     }
+
 private:
     std::vector<Move> history;
     std::vector<Move> legalMoves;
