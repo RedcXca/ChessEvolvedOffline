@@ -169,7 +169,7 @@ void Board::testMove(Move move) {
     currColor = getNextColor(currColor);
 }
 
-const std::vector<Move> Board::generateLegalMoves() {
+const std::vector<Move>& Board::generateLegalMoves() {
     Color otherSide = getNextColor(currColor);
     std::vector<Move> moves;
     for (int i = 0; i < SIZE; i++) {
@@ -246,7 +246,7 @@ const std::vector<Move> Board::generateLegalMoves() {
         }
     }
     legalMoveHistory.push_back(newLegalMoves);
-    return newLegalMoves;
+    return legalMoveHistory.back();
 }
 
 const std::vector<Move>& Board::getLegalMoves() {
@@ -385,4 +385,7 @@ Position Board::getSelected() {
 }
 void Board::setSelected(Position p) {
     selected = p;
+}
+Piece* Board::getPiece(Position p) {
+    return board[p.y][p.x];
 }

@@ -19,9 +19,9 @@ MoveInput ComputerLevel4::getNextMove(Board& board) {
         moveScores.push_back({score, move});
     }
     auto maxScore = std::max_element(moveScores.begin(), moveScores.end(), [&](const auto& a, const auto& b) {
-        return  a.first < b.first;
+        return a.first < b.first;
     });
-    std::cout << "MaxScore: " << maxScore->first << std::endl;
+    //std::cout << "MaxScore: " << maxScore->first << std::endl;
     std::vector<Move> bestMoves;
     for (auto& move : moveScores) {
         if (std::fabs(move.first - maxScore->first) < 0.001f) bestMoves.push_back(move.second);
@@ -47,11 +47,10 @@ float centralizationScore(Position p) {
     return centralizedValue;
 }
 
-float ComputerLevel4::moveScore(Board& board, Move move, bool log) {
+// Calculates the capture score of a square, which should contain a piece
+int ComputerLevel4::squareScore(Board& board, Position pos) {
     int myGains = 0, otherGains = 0;
-    if (move.capturedPiece) myGains += move.capturedPiece->getValue();
-    board.makeMove(move);
-    auto colorMap = board.checkThreatenedPieces(move.to);
+    auto colorMap = board.checkThreatenedPieces(pos);
     auto& otherSide = colorMap[board.getSide()];
     auto& mySide = colorMap[board.getNextColor(board.getSide())];
 
@@ -61,14 +60,31 @@ float ComputerLevel4::moveScore(Board& board, Move move, bool log) {
             return a->getValue() < b->getValue();
         });
     }
-
-    if (otherSide.size()) otherGains += move.originalPiece->getValue();
-    for (int i = 0; i < std::min(std::ssize(mySide), std::ssize(otherSide) - 1); ++i) {
+    if (otherSide.size()) otherGains += board.getPiece(pos)->getValue(); // should always have a piece here
+    for (int i = 0; i < std::min(std::ssize(mySide), std::ssize(otherSide) - 1) && otherSide[i]->getValue() <= mySide[i]->getValue(); ++i) {
         myGains += otherSide[i]->getValue();
         otherGains += mySide[i]->getValue();
     }
-    board.undoMove();
-    if (log) std::cout << "Calculating centralization score from: " << move.from.toString() << " to " <<move.to.toString() << ": SCORE: " << (myGains - otherGains + CHECKWEIGHT * move.check + CENTRALIZATIONWEIGHT * (centralizationScore(move.to) - centralizationScore(move.from))) * (!move.promotionPiece || move.promotionPiece == 'Q') <<" MyGains: " << myGains << " OtherGains: " << otherGains << " Check: " << (move.check ? "true" : "false") << " Centralization To  " << centralizationScore(move.to) << " Centralization From " << centralizationScore(move.from) << std::endl;
-    return (myGains - otherGains + CHECKWEIGHT * move.check + CENTRALIZATIONWEIGHT * (centralizationScore(move.to) - centralizationScore(move.from))) * (!move.promotionPiece || move.promotionPiece == 'Q'); // auto-queen
+    return myGains - otherGains;
 }
 
+float ComputerLevel4::moveScore(Board& board, Move move, bool log) {
+    int minGain = INT_MAX;
+    board.makeMove(move);
+    for (int i = 0; i < 7; ++i) {
+        for (int j = 0; j < 7; ++j) {
+            Position pos{i, j};
+            if (board.getPiece(pos) && board.getPiece(pos)->getColor() == board.getNextColor(board.getSide())) {
+                int gain = squareScore(board, pos);
+                if (gain < minGain)
+                    minGain = gain;
+            }
+        }
+    }
+    if (move.capturedPiece) minGain += move.capturedPiece->getValue();
+    board.undoMove();
+
+    if (log) std::cout << "Calculating centralization score from: " << move.from.toString() << " to " << move.to.toString() << ": SCORE: " << (minGain + CHECKWEIGHT * move.check + CENTRALIZATIONWEIGHT * (centralizationScore(move.to) - centralizationScore(move.from))) * (!move.promotionPiece || move.promotionPiece == 'Q') << " minGain " << minGain << " Check: " << (move.check ? "true" : "false") << " Centralization To  " << centralizationScore(move.to) << " Centralization From " << centralizationScore(move.from) << std::endl;
+
+    return (minGain + CHECKWEIGHT * move.check + CENTRALIZATIONWEIGHT * (TOCENTRALIZATIONWEIGHT * centralizationScore(move.to) - centralizationScore(move.from))) * (!move.promotionPiece || move.promotionPiece == 'Q'); // auto-queen
+}

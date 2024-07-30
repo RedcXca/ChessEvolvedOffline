@@ -44,12 +44,13 @@ struct Board {
     SquareState getState(Position) const;
     Position getSelected();
     void setSelected(Position p);
+    Piece* getPiece(Position p);
 
 private:
     Position selected = {-1, -1};
     std::vector<Move> history;
     std::vector<std::vector<Move>> legalMoveHistory;
-    const std::vector<Move> generateLegalMoves();
+    const std::vector<Move>& generateLegalMoves();
     void testUndo();
     void testMove(Move);
     std::array<std::array<Piece*, SIZE>, SIZE> board{};

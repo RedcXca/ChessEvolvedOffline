@@ -125,7 +125,7 @@ void Game::play(std::map<Color, std::string> players) {
                             break;
                         }
                     } else
-                        std::cerr << "Illegal move.\n" << move.from.toString() << move.to.toString();
+                        std::cerr << "Illegal move.\n";
                 }
             } else if (command == "undo") {
                 board.undoMove();
