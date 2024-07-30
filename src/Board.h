@@ -39,6 +39,9 @@ struct Board {
     struct SquareState {
         char piece;
         bool highlighted;
+        bool operator==(const SquareState& other) const {
+            return piece == other.piece && highlighted == other.highlighted;
+        }
     };
     SquareState getState(Position) const;
     Position getSelected();

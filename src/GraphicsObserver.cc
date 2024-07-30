@@ -16,13 +16,15 @@ constexpr inline int RGB(int r, int g, int b) {
 constexpr int SQUARE_DIM = 60, WHITE_SQUARE = RGB(238, 238, 210), BLACK_SQUARE = RGB(118, 150, 86), MOVE_CIRCLE = RGB(255, 0, 0);
 
 std::vector<png_bytep> GraphicsObserver::readPngFile(const char* file_name) {
-    std::unique_ptr<FILE, decltype([](FILE* fp){ // RAII to interface with C-style API
-        if (fp) std::fclose(fp);
-    })> fp{std::fopen(file_name, "rb")};
+    std::unique_ptr<FILE, decltype([](FILE* fp) { // RAII to interface with C-style API
+                        if (fp) std::fclose(fp);
+                    })>
+        fp{std::fopen(file_name, "rb")};
     if (!fp) throw UnrecoverableChessException{std::string{"File "} + file_name + " could not be opened for reading."};
-    std::unique_ptr<png_struct, decltype([](png_structp p){
-        if (p) png_destroy_read_struct(&p, nullptr, nullptr);
-    })> png{png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)};
+    std::unique_ptr<png_struct, decltype([](png_structp p) {
+                        if (p) png_destroy_read_struct(&p, nullptr, nullptr);
+                    })>
+        png{png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)};
     if (!png) throw UnrecoverableChessException{"png_create_read_struct failed."};
     auto pngInfoDelete = [&](png_infop p) {
         if (p) png_destroy_info_struct(png.get(), &p);
@@ -131,9 +133,12 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
     hints.width = hints.base_width = hints.min_width = hints.max_width = Board::SIZE * SQUARE_DIM;
     XSetNormalHints(display, win, &hints);
     // XSynchronize(display, True);
-    for (int y = 0; y < Board::SIZE; ++y)
-        for (int x = 0; x < Board::SIZE; ++x)
+    for (int y = 0; y < Board::SIZE; ++y) {
+        for (int x = 0; x < Board::SIZE; ++x) {
             drawSquare(x, y, {' ', false});
+            prevGrid[y][x] = {' ', false};
+        }
+    }
     for (const auto& dirEntry : std::filesystem::directory_iterator{"icons"})
         pngIcons.emplace(dirEntry.path().stem(), readPngFile(dirEntry.path().c_str()));
     XFlush(display);
@@ -141,8 +146,14 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
 
 void GraphicsObserver::update() {
     for (int y = 0; y < Board::SIZE; ++y)
-        for (int x = 0; x < Board::SIZE; ++x)
-            drawSquare(x, y, game->getState(Position{x, Board::SIZE - 1 - y}));
+        for (int x = 0; x < Board::SIZE; ++x){
+            Board::SquareState newState = game->getState(Position{x, Board::SIZE - 1 - y});
+            if (!(newState == prevGrid[y][x])) {
+                drawSquare(x, y, newState);
+                prevGrid[y][x] = newState;
+            }
+        }
+            
 }
 
 GraphicsObserver::~GraphicsObserver() {
