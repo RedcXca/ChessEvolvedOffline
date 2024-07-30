@@ -366,13 +366,12 @@ Board::SquareState Board::getState(Position pos) const {
     return state;
 }
 
-void Board::removePiece(Position pos) {
-    if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return;
-    if (board[pos.y][pos.x]) {
-        auto it = std::find_if(allPieces.begin(), allPieces.end(), [&](const auto& p) { return p.get() == board[pos.y][pos.x]; });
-        if (it != allPieces.end()) allPieces.erase(it);
-        board[pos.y][pos.x] = nullptr;
-    }
+bool Board::removePiece(Position pos) {
+    if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE || !board[pos.y][pos.x]) return false;
+    auto it = std::find_if(allPieces.begin(), allPieces.end(), [&](const auto& p) { return p.get() == board[pos.y][pos.x]; });
+    if (it != allPieces.end()) allPieces.erase(it);
+    board[pos.y][pos.x] = nullptr;
+    return true;
 }
 
 Color Board::getSide() const {

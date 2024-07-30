@@ -60,7 +60,7 @@ private:
     Color currColor{};
     bool checkBlocked(Position, int deltaX, int deltaY, bool attackable = false, Color otherSide = Color::White);
     bool placePiece(Position, char);
-    void removePiece(Position);
+    bool removePiece(Position);
     void setColor(Color);
     template<typename Func> void checkThreatenedImpl(Position pos, Func func);
 };

@@ -24,9 +24,10 @@ void Game::setup() {
             if (command == "+") {
                 std::cin >> piece >> square;
                 board.placePiece(Position{square}, piece[0]);
+                notifyObservers();
             } else if (command == "-") {
                 std::cin >> square;
-                board.removePiece(Position{square});
+                if (board.removePiece(Position{square})) notifyObservers();
             } else if (std::string color; command == "=") {
                 std::cin >> color;
                 if (color == "white")
