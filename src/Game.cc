@@ -124,13 +124,11 @@ void Game::play(std::map<Color, std::string> players) {
                     } else
                         std::cerr << "Illegal move.\n";
                 }
-            } 
-            else if (command == "undo") {
+            } else if (command == "undo") {
                 board.undoMove();
                 notifyObservers();
                 board.generateLegalMoves();
-            }
-            else if (command == "select") {
+            } else if (command == "select") {
                 std::string position;
                 std::cin >> position;
                 board.setSelected(Position(position));
@@ -138,8 +136,7 @@ void Game::play(std::map<Color, std::string> players) {
             } else if (command == "deselect") {
                 board.setSelected(Position(-1, -1));
                 notifyObservers();
-            }
-            else
+            } else
                 std::cerr << "Invalid command!\n";
         } catch (const ChessException& ce) {
             std::cerr << ce.what() << '\n';
