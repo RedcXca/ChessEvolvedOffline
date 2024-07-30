@@ -48,6 +48,10 @@ inline int signum(int x) { return (x > 0) - (x < 0); }
 bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions.at(side))[getNextColor(side)]; }
 
 void Board::undoMove() {
+    undoMoveNoRegen();
+    generateLegalMoves();
+}
+void Board::undoMoveNoRegen() {
     if (!history.size()) throw ChessException("No move to undo");
     Move lastMove = history.back();
     history.pop_back();
@@ -84,20 +88,41 @@ bool Board::checkBlocked(Position pos, int deltaX, int deltaY, bool attackable, 
     return false;
 }
 
-// Returns the number of pieces threatening the given position for each color
-std::map<Color, int> Board::checkThreatened(Position pos) {
-    std::map<Color, int> threatened;
-    for (int i = 0; i < SIZE; i++)
-        for (int j = 0; j < SIZE; j++)
-            if (board[i][j])
-                for (auto move : board[i][j]->getPossibleMoves())
+// template function for threat checks
+template<typename Func>
+void Board::checkThreatenedImpl(Position pos, Func func) {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (board[i][j]) {
+                for (auto move : board[i][j]->getPossibleMoves()) {
                     if (i + move.deltaY == pos.y && j + move.deltaX == pos.x) {
                         if (move.type == MoveType::MoveOnly || move.type == MoveType::Teleport) continue;
                         if (move.type == MoveType::AttackOnly || move.type == MoveType::MoveOrAttack) {
                             if (checkBlocked({j, i}, move.deltaX, move.deltaY, true, getNextColor(board[i][j]->getColor()))) continue;
                         }
-                        threatened[board[i][j]->getColor()]++;
+                        func(board[i][j], move);
                     }
+                }
+            }
+        }
+    }
+}
+
+// Returns the number of pieces threatening the given position for each color
+std::map<Color, int> Board::checkThreatened(Position pos) {
+    std::map<Color, int> threatened;
+    checkThreatenedImpl(pos, [&](Piece* piece, const Move& move) {
+        threatened[piece->getColor()]++;
+    });
+    return threatened;
+}
+
+// Returns a vector of the pieces threatening the given position for each color
+std::map<Color, std::vector<Piece*>> Board::checkThreatenedPieces(Position pos) {
+    std::map<Color, std::vector<Piece*>> threatened;
+    checkThreatenedImpl(pos, [&](Piece* piece, const Move& move) {
+        threatened[piece->getColor()].push_back(move.originalPiece);
+    });
     return threatened;
 }
 
@@ -216,7 +241,7 @@ const std::vector<Move>& Board::generateLegalMoves() {
                 if (!validateBoard(currColor)) currMove.check = true;
                 legalMoves.push_back(currMove);
             }
-            undoMove();
+            undoMoveNoRegen();
         }
     }
     return legalMoves;
@@ -328,7 +353,7 @@ Board::SquareState Board::getState(Position pos) const {
     state.highlighted = false;
     if (selected != Position(-1, -1) && board[selected.y][selected.x]) {
         for (auto move : legalMoves) {
-            if (move.from == selected && move.to == pos){
+            if (move.from == selected && move.to == pos) {
                 state.highlighted = true;
                 break;
             }

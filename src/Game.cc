@@ -8,6 +8,7 @@
 #include "ComputerLevel1.h"
 #include "ComputerLevel2.h"
 #include "ComputerLevel3.h"
+#include "ComputerLevel4.h"
 #include <optional>
 
 Board::SquareState Game::getState(Position p) const {
@@ -63,7 +64,8 @@ Player* getPlayer(std::string playerType, Color c) {
     if (playerType == "computer1") return new ComputerLevel1{c};
     if (playerType == "computer2") return new ComputerLevel2{c};
     if (playerType == "computer3") return new ComputerLevel3{c};
-    // TODO: handle computer level 4
+    if (playerType == "computer4") return new ComputerLevel4{c};
+    // TODO: handle computer level 5
     throw ChessException{"Invalid player type."};
 }
 
@@ -127,7 +129,6 @@ void Game::play(std::map<Color, std::string> players) {
             } else if (command == "undo") {
                 board.undoMove();
                 notifyObservers();
-                board.generateLegalMoves();
             } else if (command == "select") {
                 std::string position;
                 std::cin >> position;
