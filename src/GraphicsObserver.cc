@@ -94,7 +94,7 @@ void GraphicsObserver::drawSquare(int x, int y, char symbol) {
     fillRectangle(x * SQUARE_DIM, y * SQUARE_DIM, SQUARE_DIM, SQUARE_DIM, bg);
     if (symbol != ' ') {
         Pixmap pixmap = XCreatePixmap(display, win, SQUARE_DIM, SQUARE_DIM, vinfo.depth);
-        blendImageWithBackground(pixmap, gc, pngIcons.at(std::string("icons/") + symbol + ".png").data(), SQUARE_DIM, SQUARE_DIM, bg);
+        blendImageWithBackground(pixmap, gc, pngIcons.at(std::string{symbol}).data(), SQUARE_DIM, SQUARE_DIM, bg);
         XCopyArea(display, pixmap, win, gc, 0, 0, SQUARE_DIM, SQUARE_DIM, x * SQUARE_DIM, y * SQUARE_DIM);
         XFreePixmap(display, pixmap);
     }
@@ -131,7 +131,7 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
         for (int x = 0; x < Board::SIZE; ++x)
             drawSquare(x, y, ' ');
     for (const auto& dirEntry : std::filesystem::directory_iterator{"icons"})
-        pngIcons.emplace(dirEntry.path(), read_png_file(dirEntry.path().c_str()));
+        pngIcons.emplace(dirEntry.path().stem(), read_png_file(dirEntry.path().c_str()));
     XFlush(display);
 }
 
