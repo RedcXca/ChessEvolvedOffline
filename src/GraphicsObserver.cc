@@ -106,7 +106,7 @@ void GraphicsObserver::drawSquare(int x, int y, Board::SquareState symbol) {
     }
     if (y == Board::SIZE - 1) {
         char file = x + 'a';
-        XDrawString(display, win, DefaultGC(display, screen), (x + 1) * SQUARE_DIM - 10, (y + 1) * SQUARE_DIM - 5, &file, 1);
+        XDrawString(display, win, DefaultGC(display, screen), (x + 1) * SQUARE_DIM - 7, (y + 1) * SQUARE_DIM - 5, &file, 1);
     }
     if (x == 0) {
         char rank = Board::SIZE - y + '0';
