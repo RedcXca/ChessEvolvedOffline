@@ -106,11 +106,11 @@ void GraphicsObserver::drawSquare(int x, int y, Board::SquareState symbol) {
     }
     if (y == Board::SIZE - 1) {
         char file = x + 'a';
-        XDrawString(display, win, DefaultGC(display, screen), (x + 1) * SQUARE_DIM - 7, (y + 1) * SQUARE_DIM - 5, &file, 1);
+        XDrawString(display, win, textGC, (x + 1) * SQUARE_DIM - 7, (y + 1) * SQUARE_DIM - 5, &file, 1);
     }
     if (x == 0) {
         char rank = Board::SIZE - y + '0';
-        XDrawString(display, win, DefaultGC(display, screen), 5, y * SQUARE_DIM + 15, &rank, 1);
+        XDrawString(display, win, textGC, 5, y * SQUARE_DIM + 15, &rank, 1);
     }
 }
 
@@ -123,6 +123,10 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
     XMapWindow(display, win);
     XStoreName(display, win, "Chess");
     gc = XCreateGC(display, win, 0, NULL);
+    textGC = XCreateGC(display, win, 0, NULL);
+    auto fontName = "-*-helvetica-bold-r-normal--12-*-*-*-*-*-*-*";
+    if (font = XLoadQueryFont(display, fontName)) XSetFont(display, textGC, font->fid);
+    else std::cerr << "Unable to load font " << fontName << '\n'; // not a fatal error
     XSizeHints hints;
     hints.flags = (USPosition | PSize | PMinSize | PMaxSize);
     hints.height = hints.base_height = hints.min_height = hints.max_height = Board::SIZE * SQUARE_DIM;
@@ -153,7 +157,9 @@ void GraphicsObserver::update() {
 }
 
 GraphicsObserver::~GraphicsObserver() {
-    XFreeGC(display, gc);
+    if (gc) XFreeGC(display, gc);
+    if (textGC) XFreeGC(display, textGC);
+    if (font) XFreeFont(display, font); // unfortunately XLib doesn't free some global pointers
     XDestroyWindow(display, win);
     XCloseDisplay(display);
 }
