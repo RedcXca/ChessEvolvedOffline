@@ -26,12 +26,10 @@ MoveInput ComputerLevel4::getNextMove(Board& board) {
     for (auto& move : moveScores) {
         if (std::fabs(move.first - maxScore->first) < 0.001f) bestMoves.push_back(move.second);
     }
-    for (auto& move : bestMoves) {
-        moveScore(board, move, true);
-    }
-    MoveInput returnValue = randomMove(bestMoves);
-    std::cout << returnValue.from.toString() << returnValue.to.toString() << std::endl;
-    return returnValue;
+    // for (auto& move : bestMoves) {
+    //     moveScore(board, move, true);
+    // }
+    return randomMove(bestMoves);
 }
 
 float centralizationScore(Position p) {

@@ -47,7 +47,6 @@ bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions.at
 void Board::undoMove() {
     testUndo();
     legalMoveHistory.pop_back();
-    legalMoves = legalMoveHistory.back();
 }
 void Board::testUndo() {
     if (!history.size()) throw ChessException("No move to undo");
@@ -126,7 +125,7 @@ std::map<Color, std::vector<Piece*>> Board::checkThreatenedPieces(Position pos) 
 
 void Board::makeMove(Move move) {
     testMove(move);
-    legalMoveHistory.push_back(generateLegalMoves());
+    generateLegalMoves();
 }
 // assumes move is legal
 void Board::testMove(Move move) {
@@ -170,9 +169,7 @@ void Board::testMove(Move move) {
     currColor = getNextColor(currColor);
 }
 
-
-
-const std::vector<Move>& Board::generateLegalMoves() {
+const std::vector<Move> Board::generateLegalMoves() {
     Color otherSide = getNextColor(currColor);
     std::vector<Move> moves;
     for (int i = 0; i < SIZE; i++) {
@@ -228,8 +225,8 @@ const std::vector<Move>& Board::generateLegalMoves() {
             }
         }
     }
-    legalMoves.clear();
-    legalMoves.reserve(moves.size());
+    std::vector<Move> newLegalMoves;
+    newLegalMoves.reserve(moves.size());
     for (auto move : moves) {
         std::vector<Move> currMoves;
         if (isPiece(move.originalPiece, 'p') && move.to.y == (move.originalPiece->getColor() == Color::White ? 7 : 0)) {
@@ -243,16 +240,17 @@ const std::vector<Move>& Board::generateLegalMoves() {
             testMove(currMove);
             if (validateBoard(getNextColor(currColor))) {
                 if (!validateBoard(currColor)) currMove.check = true;
-                legalMoves.push_back(currMove);
+                newLegalMoves.push_back(currMove);
             }
             testUndo();
         }
     }
-    return legalMoves;
+    legalMoveHistory.push_back(newLegalMoves);
+    return newLegalMoves;
 }
 
 const std::vector<Move>& Board::getLegalMoves() {
-    return legalMoves;
+    return legalMoveHistory.back();
 }
 
 bool Board::placePiece(Position pos, char piece) {
@@ -356,7 +354,7 @@ Board::SquareState Board::getState(Position pos) const {
     state.piece = board[pos.y][pos.x] ? board[pos.y][pos.x]->toChar() : ' ';
     state.highlighted = false;
     if (selected != Position(-1, -1) && board[selected.y][selected.x]) {
-        for (auto move : legalMoves) {
+        for (auto move : legalMoveHistory.back()) {
             if (move.from == selected && move.to == pos) {
                 state.highlighted = true;
                 break;
