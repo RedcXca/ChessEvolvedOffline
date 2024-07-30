@@ -44,8 +44,8 @@ void Game::setup() {
                 bool badPawn = false;
                 for (int x = 0; x < Board::SIZE; ++x)
                     badPawn |= isPawn(board.board[Board::SIZE - 1][x]) || isPawn(board.board[0][x]);
-                if (pieceCount['k'] != 1) std::cerr << "There must be exactly 1 white king.\n";
-                else if (pieceCount['K'] != 1) std::cerr << "There must be exactly 1 black king.\n";
+                if (pieceCount['k'] != 1) std::cerr << "There must be exactly 1 black king.\n";
+                else if (pieceCount['K'] != 1) std::cerr << "There must be exactly 1 white king.\n";
                 else if (badPawn) std::cerr << "No pawns may be on the first or last row of the board.\n";
                 else if (!board.validateBoard(Color::White) || !board.validateBoard(Color::Black)) std::cerr << "Neither king must be in check.\n";
                 else break;

@@ -226,8 +226,12 @@ const std::vector<Move>& Board::getLegalMoves() {
 
 bool Board::placePiece(Position pos, char piece) {
     if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return false;
-    if (board[pos.y][pos.x]) return false;
     Color color = std::isupper(piece) ? Color::White : Color::Black;
+    if (board[pos.y][pos.x]) {
+        std::erase_if(allPieces, [&](const auto& p){
+            return p.get() == board[pos.y][pos.x];
+        });
+    }
     switch (std::tolower(piece)) {
     case 'a':
         allPieces.push_back(std::make_unique<Angel>(color));
