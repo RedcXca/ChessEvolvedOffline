@@ -23,10 +23,11 @@ private:
     GC gc;
     std::map<std::string, std::vector<png_bytep>> pngIcons;
     std::vector<std::unique_ptr<png_byte[]>> rowPointers;
+    std::array<std::array<Board::SquareState, Board::SIZE>, Board::SIZE> prevGrid;
+
     void fillRectangle(int x, int y, int width, int height, int color);
     void drawSquare(int x, int y, Board::SquareState piece);
     void blendImageWithBackground(Pixmap pixmap, GC gc, png_bytep* rowPointers, int width, int height, int bgPixel);
     std::vector<png_bytep> readPngFile(const char* file_name);
-    std::array<std::array<Board::SquareState, Board::SIZE>, Board::SIZE> prevGrid;
 };
 #endif

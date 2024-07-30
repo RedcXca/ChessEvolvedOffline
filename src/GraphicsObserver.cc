@@ -104,18 +104,14 @@ void GraphicsObserver::drawSquare(int x, int y, Board::SquareState symbol) {
         XSetForeground(display, gc, MOVE_CIRCLE); // Set the highlight color
         XFillArc(display, win, gc, centerX - radius, centerY - radius, 2 * radius, 2 * radius, 0, 360 * 64);
     }
-    XFlush(display);
     if (y == Board::SIZE - 1) {
         char file = x + 'a';
-        XFlush(display);
         XDrawString(display, win, DefaultGC(display, screen), (x + 1) * SQUARE_DIM - 10, (y + 1) * SQUARE_DIM - 5, &file, 1);
     }
     if (x == 0) {
         char rank = Board::SIZE - y + '0';
-        XFlush(display);
         XDrawString(display, win, DefaultGC(display, screen), 5, y * SQUARE_DIM + 15, &rank, 1);
     }
-    XFlush(display);
 }
 
 GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDisplay(NULL)} {
@@ -153,7 +149,7 @@ void GraphicsObserver::update() {
                 prevGrid[y][x] = newState;
             }
         }
-            
+    XFlush(display);
 }
 
 GraphicsObserver::~GraphicsObserver() {
