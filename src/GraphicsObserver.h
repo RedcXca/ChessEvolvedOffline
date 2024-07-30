@@ -20,7 +20,8 @@ private:
     int screen;
     Window win;
     XVisualInfo vinfo;
-    GC gc;
+    GC gc{}, textGC{};
+    XFontStruct* font{};
     std::map<std::string, std::vector<png_bytep>> pngIcons;
     std::vector<std::unique_ptr<png_byte[]>> rowPointers;
     std::array<std::array<Board::SquareState, Board::SIZE>, Board::SIZE> prevGrid;

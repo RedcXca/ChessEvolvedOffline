@@ -14,7 +14,7 @@ struct Board {
     friend class Game;
     static inline constexpr int SIZE = 8;
     static constexpr auto PROMOTION_CHOICES = {'Q', 'N', 'B', 'R'};
-    Board(const std::string& fileName = "initialState.txt");
+    explicit Board(const std::string& fileName = "initialState.txt");
     bool validateBoard(Color side);
     std::map<Color, int> checkThreatened(Position);
     std::map<Color, std::vector<Piece*>> checkThreatenedPieces(Position pos);
@@ -41,9 +41,7 @@ struct Board {
     struct SquareState {
         char piece;
         bool highlighted;
-        bool operator==(const SquareState& other) const {
-            return piece == other.piece && highlighted == other.highlighted;
-        }
+        bool operator==(const SquareState& other) const = default;
     };
     SquareState getState(Position) const;
     Position getSelected();
