@@ -17,16 +17,17 @@ constexpr int SQUARE_DIM = 60, WHITE_SQUARE = RGB(238, 238, 210), BLACK_SQUARE =
 
 std::vector<png_bytep> GraphicsObserver::read_png_file(const char* file_name) {
     std::unique_ptr<FILE, decltype([](FILE* fp){ // RAII to interface with C-style API
-        std::fclose(fp);
+        if (fp) std::fclose(fp);
     })> fp{std::fopen(file_name, "rb")};
     if (!fp) throw UnrecoverableChessException{std::string{"File "} + file_name + " could not be opened for reading."};
     std::unique_ptr<png_struct, decltype([](png_structp p){
         if (p) png_destroy_read_struct(&p, nullptr, nullptr);
     })> png{png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL)};
     if (!png) throw UnrecoverableChessException{"png_create_read_struct failed."};
-    std::unique_ptr<png_info, decltype([](png_infop p){
-        if (p) png_destroy_info_struct(nullptr, &p);
-    })> info{png_create_info_struct(png.get())};
+    auto pngInfoDelete = [&](png_infop p) {
+        if (p) png_destroy_info_struct(png.get(), &p);
+    };
+    std::unique_ptr<png_info, decltype(pngInfoDelete)> info{png_create_info_struct(png.get()), pngInfoDelete};
     if (!info) throw UnrecoverableChessException{"png_create_info_struct failed."};
     if (setjmp(png_jmpbuf(png.get()))) throw UnrecoverableChessException{"setjmp failed."};
     png_init_io(png.get(), fp.get());
@@ -51,7 +52,7 @@ std::vector<png_bytep> GraphicsObserver::read_png_file(const char* file_name) {
     rawRowPointers.reserve(SQUARE_DIM);
     for (int y = 0; y < SQUARE_DIM; y++) {
         rawRowPointers.push_back(new png_byte[png_get_rowbytes(png.get(), info.get())]);
-        rowPointers.emplace_back(std::unique_ptr<png_byte>(rawRowPointers.back()));
+        rowPointers.emplace_back(rawRowPointers.back());
     }
     png_read_image(png.get(), rawRowPointers.data());
     return rawRowPointers;
