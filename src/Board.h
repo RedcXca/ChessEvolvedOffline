@@ -14,7 +14,7 @@ struct Board {
     friend class Game;
     static inline constexpr int SIZE = 8;
     static constexpr auto PROMOTION_CHOICES = {'Q', 'N', 'B', 'R'};
-    Board(const std::string& fileName = "initialState.txt");
+    explicit Board(const std::string& fileName = "initialState.txt");
     bool validateBoard(Color side);
     std::map<Color, int> checkThreatened(Position);
     const std::vector<Move>& generateLegalMoves();
