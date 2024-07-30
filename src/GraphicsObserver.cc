@@ -148,7 +148,7 @@ void GraphicsObserver::update() {
     for (int y = 0; y < Board::SIZE; ++y)
         for (int x = 0; x < Board::SIZE; ++x){
             Board::SquareState newState = game->getState(Position{x, Board::SIZE - 1 - y});
-            if (!(newState == prevGrid[y][x])) {
+            if (newState != prevGrid[y][x]) {
                 drawSquare(x, y, newState);
                 prevGrid[y][x] = newState;
             }
