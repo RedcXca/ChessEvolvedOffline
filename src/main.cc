@@ -10,6 +10,7 @@
 int main() {
     Game game;
     TextObserver textObserver(&game);
+    GraphicsObserver GraphicsObserver{&game};
     // GraphicsObserver graphicsObserver(&game);
     // game.attach(&graphicsObserver);
 
