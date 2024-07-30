@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include "ChessException.h"
 #include "angel.h"
 #include "axeman.h"
 #include "bishop.h"
@@ -47,6 +48,7 @@ inline int signum(int x) { return (x > 0) - (x < 0); }
 bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions.at(side))[getNextColor(side)]; }
 
 void Board::undoMove() {
+    if (!history.size()) throw ChessException("No move to undo");
     Move lastMove = history.back();
     history.pop_back();
     board[lastMove.from.y][lastMove.from.x] = lastMove.originalPiece; // reset original piece
