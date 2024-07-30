@@ -1,4 +1,4 @@
-#include "GraphicObserver.h"
+#include "GraphicsObserver.h"
 #include <png.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>

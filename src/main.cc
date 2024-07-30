@@ -3,7 +3,7 @@
 #include "Game.h"
 #include "Observer.h"
 #include "TextObserver.h"
-#include "GraphicObserver.h"
+#include "GraphicsObserver.h"
 #include "Subject.h"
 #include "ChessException.h"
 #include "UnrecoverableChessException.h"
