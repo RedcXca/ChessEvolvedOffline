@@ -45,12 +45,13 @@ inline int signum(int x) { return (x > 0) - (x < 0); }
 bool Board::validateBoard(Color side) { return !checkThreatened(kingPositions.at(side))[getNextColor(side)]; }
 
 void Board::undoMove() {
-    undoMoveNoRegen();
-    generateLegalMoves();
+    testUndo();
+    legalMoveHistory.pop_back();
+    legalMoves = legalMoveHistory.back();
 }
-void Board::undoMoveNoRegen() {
+void Board::testUndo() {
     if (!history.size()) throw ChessException("No move to undo");
-    Move lastMove = history.back();
+    Move lastMove = std::move(history.back());
     history.pop_back();
     board[lastMove.from.y][lastMove.from.x] = lastMove.originalPiece; // reset original piece
     if (lastMove.originalPiece->toChar() != board[lastMove.to.y][lastMove.to.x]->toChar()) {
@@ -97,7 +98,7 @@ void Board::checkThreatenedImpl(Position pos, Func func) {
                         if (move.type == MoveType::AttackOnly || move.type == MoveType::MoveOrAttack) {
                             if (checkBlocked({j, i}, move.deltaX, move.deltaY, true, getNextColor(board[i][j]->getColor()))) continue;
                         }
-                        func(board[i][j], move);
+                        func(board[i][j]);
                     }
                 }
             }
@@ -108,7 +109,7 @@ void Board::checkThreatenedImpl(Position pos, Func func) {
 // Returns the number of pieces threatening the given position for each color
 std::map<Color, int> Board::checkThreatened(Position pos) {
     std::map<Color, int> threatened;
-    checkThreatenedImpl(pos, [&](Piece* piece, const Move& move) {
+    checkThreatenedImpl(pos, [&](Piece* piece) {
         threatened[piece->getColor()]++;
     });
     return threatened;
@@ -117,14 +118,18 @@ std::map<Color, int> Board::checkThreatened(Position pos) {
 // Returns a vector of the pieces threatening the given position for each color
 std::map<Color, std::vector<Piece*>> Board::checkThreatenedPieces(Position pos) {
     std::map<Color, std::vector<Piece*>> threatened;
-    checkThreatenedImpl(pos, [&](Piece* piece, const Move& move) {
-        threatened[piece->getColor()].push_back(move.originalPiece);
+    checkThreatenedImpl(pos, [&](Piece* piece) {
+        threatened[piece->getColor()].push_back(piece);
     });
     return threatened;
 }
 
-// assumes move is legal
 void Board::makeMove(Move move) {
+    testMove(move);
+    legalMoveHistory.push_back(generateLegalMoves());
+}
+// assumes move is legal
+void Board::testMove(Move move) {
     history.push_back(move);
     board[move.to.y][move.to.x] = move.originalPiece;
     board[move.from.y][move.from.x] = nullptr;
@@ -164,6 +169,8 @@ void Board::makeMove(Move move) {
     }
     currColor = getNextColor(currColor);
 }
+
+
 
 const std::vector<Move>& Board::generateLegalMoves() {
     Color otherSide = getNextColor(currColor);
@@ -233,12 +240,12 @@ const std::vector<Move>& Board::generateLegalMoves() {
         } else
             currMoves.push_back(move);
         for (auto currMove : currMoves) {
-            makeMove(currMove);
+            testMove(currMove);
             if (validateBoard(getNextColor(currColor))) {
                 if (!validateBoard(currColor)) currMove.check = true;
                 legalMoves.push_back(currMove);
             }
-            undoMoveNoRegen();
+            testUndo();
         }
     }
     return legalMoves;

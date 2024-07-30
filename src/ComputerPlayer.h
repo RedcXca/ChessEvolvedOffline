@@ -3,7 +3,7 @@
 #include "color.h"
 #include "Player.h"
 #include <random>
-#include <UnrecoverableChessException.h>
+#include "UnrecoverableChessException.h"
 struct ComputerPlayer : Player {
     ComputerPlayer(Color color) : color{color} {}
 

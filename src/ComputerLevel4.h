@@ -4,8 +4,9 @@
 
 struct ComputerLevel4 : ComputerPlayer {
     MoveInput getNextMove(Board&) override;
-    int moveScore (Board&, Move);
-    const int CHECKWEIGHT = 1;
+    float moveScore (Board&, Move, bool log = false);
+    const float CHECKWEIGHT = 0.5;
+    const float CENTRALIZATIONWEIGHT = 0.8;
     using ComputerPlayer::ComputerPlayer;
 };
 #endif

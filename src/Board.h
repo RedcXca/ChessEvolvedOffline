@@ -18,11 +18,9 @@ struct Board {
     bool validateBoard(Color side);
     std::map<Color, int> checkThreatened(Position);
     std::map<Color, std::vector<Piece*>> checkThreatenedPieces(Position pos);
-    const std::vector<Move>& generateLegalMoves();
     const std::vector<Move>& getLegalMoves();
     void makeMove(Move);
     void undoMove();
-    void undoMoveNoRegen();
     Color getSide() const;
     static inline Color getNextColor(Color color) {
         return Color(int(color) ^ 1); // can be generalized for more colors
@@ -51,6 +49,10 @@ private:
     Position selected = {-1, -1};
     std::vector<Move> history;
     std::vector<Move> legalMoves;
+    std::vector<std::vector<Move>> legalMoveHistory;
+    const std::vector<Move>& generateLegalMoves();
+    void testUndo();
+    void testMove(Move);
     std::array<std::array<Piece*, SIZE>, SIZE> board{};
     std::map<Color, Position> kingPositions;
     std::vector<std::unique_ptr<Piece>> allPieces;

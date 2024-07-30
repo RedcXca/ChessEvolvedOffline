@@ -110,7 +110,7 @@ void Game::play(std::map<Color, std::string> players) {
                         board.makeMove(*actualMove);
                         board.setSelected(Position(-1, -1));
                         notifyObservers();
-                        auto nextLegalMoves = board.generateLegalMoves();
+                        auto nextLegalMoves = board.getLegalMoves();
                         if (actualMove->check) {
                             if (nextLegalMoves.empty()) {
                                 std::cout << "Checkmate! " << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
@@ -124,7 +124,7 @@ void Game::play(std::map<Color, std::string> players) {
                             break;
                         }
                     } else
-                        std::cerr << "Illegal move.\n";
+                        std::cerr << "Illegal move.\n" << move.from.toString() << move.to.toString();
                 }
             } else if (command == "undo") {
                 board.undoMove();
