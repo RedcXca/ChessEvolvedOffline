@@ -18,7 +18,7 @@ struct GraphicsObserver : Observer {
 private:
     Display* display;
     int screen;
-    Window root, win;
+    Window win;
     XVisualInfo vinfo;
     GC gc;
     std::map<std::string, std::vector<png_bytep>> pngIcons;

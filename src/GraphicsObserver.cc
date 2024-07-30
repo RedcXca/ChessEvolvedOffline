@@ -10,7 +10,7 @@
 #include <vector>
 
 constexpr inline int RGB(int r, int g, int b) {
-    return b | g << 8 | r << 16;
+    return r << 16 | g << 8 | b;
 }
 
 constexpr int SQUARE_DIM = 60, WHITE_SQUARE = RGB(238, 238, 210), BLACK_SQUARE = RGB(118, 150, 86), MOVE_CIRCLE = RGB(255, 0, 0);
@@ -119,7 +119,7 @@ void GraphicsObserver::drawSquare(int x, int y, Board::SquareState symbol) {
 GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDisplay(NULL)} {
     if (!display) throw UnrecoverableChessException{"Unable to open X display."};
     screen = DefaultScreen(display);
-    root = RootWindow(display, screen);
+    Window root = RootWindow(display, screen);
     if (!XMatchVisualInfo(display, screen, 24, TrueColor, &vinfo)) throw UnrecoverableChessException{"No matching visual found."};
     win = XCreateSimpleWindow(display, root, 0, 0, Board::SIZE * SQUARE_DIM, Board::SIZE * SQUARE_DIM, 1, BlackPixel(display, screen), BlackPixel(display, screen));
     XMapWindow(display, win);
