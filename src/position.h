@@ -6,6 +6,6 @@ struct Position {
     std::string toString();
     Position(const std::string& str);
     Position(int x, int y);
-    bool operator==(const Position& other) const;
+    bool operator==(const Position& other) const = default;
 };
 #endif
