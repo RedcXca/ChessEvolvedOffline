@@ -8,6 +8,7 @@
 #include "ComputerLevel1.h"
 #include "ComputerLevel2.h"
 #include "ComputerLevel3.h"
+#include <optional>
 
 char Game::getState(Position p) const {
     return board.getState(p);
@@ -77,37 +78,44 @@ void Game::play(std::map<Color, std::string> players) {
         try {
             if (command == "resign") {
                 std::cout << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
+                scores[Board::getNextColor(board.getSide())] += 2;
+                break;
             } else if (command == "move") {
                 auto move = actualPlayers[board.getSide()]->getNextMove(board);
                 if (!board.board[move.from.y][move.from.x]) std::cerr << "No piece at from square.\n";
                 else if (board.board[move.from.y][move.from.x]->getColor() != board.getSide()) std::cerr << "Cannot move opponent's piece.\n";
                 else {
-                    bool works = false;
+                    std::optional<Move> actualMove;
                     for (auto legalMove : board.generateLegalMoves())
                         if (legalMove.from == move.from && legalMove.to == move.to) {
-                            if (legalMove.promotionPiece && !move.promotion)
+                            if (legalMove.promotionPiece && !move.promotion) {
                                 std::cerr << "Promotion piece not specified.\n";
-                            else if (!legalMove.promotionPiece && move.promotion)
+                                break;
+                            } else if (!legalMove.promotionPiece && move.promotion) {
                                 std::cerr << "Invalid specification of promotion piece.\n";
-                            else if (works = legalMove.promotionPiece == move.promotion) {
-                                board.makeMove(legalMove);
-                                notifyObservers();
-                                auto nextLegalMoves = board.generateLegalMoves();
-                                if (legalMove.check) {
-                                    if (nextLegalMoves.empty()) {
-                                        std::cout << "Checkmate! " << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
-                                        scores[Board::getNextColor(board.getSide())] += 2;
-                                    } else
-                                        std::cout << getColorName(board.getSide()) << " is in check.\n";
-                                } else if (nextLegalMoves.empty()) {
-                                    std::cout << "Stalemate!\n";
-                                    for (auto& [color, score] : scores) ++score;
-                                    break;
-                                }
-                            } else continue;
+                                break;
+                            } else if (legalMove.promotionPiece == move.promotion) {
+                                actualMove = legalMove;
+                                break;
+                            }
+                        }
+                    if (actualMove) {
+                        board.makeMove(*actualMove);
+                        notifyObservers();
+                        auto nextLegalMoves = board.generateLegalMoves();
+                        if (actualMove->check) {
+                            if (nextLegalMoves.empty()) {
+                                std::cout << "Checkmate! " << getColorName(Board::getNextColor(board.getSide())) << " wins!\n";
+                                scores[Board::getNextColor(board.getSide())] += 2;
+                                break;
+                            } else
+                                std::cout << getColorName(board.getSide()) << " is in check.\n";
+                        } else if (nextLegalMoves.empty()) {
+                            std::cout << "Stalemate!\n";
+                            for (auto& [color, score] : scores) ++score;
                             break;
                         }
-                    if (!works) std::cerr << "Illegal move.\n";
+                    } else std::cerr << "Illegal move.\n";
                 }
             } else std::cerr << "Invalid command!\n";
         } catch (const ChessException& ce) {
