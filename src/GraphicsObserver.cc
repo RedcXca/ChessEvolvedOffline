@@ -15,7 +15,7 @@ constexpr inline int RGB(int r, int g, int b) {
 
 constexpr int SQUARE_DIM = 60, WHITE_SQUARE = RGB(238, 238, 210), BLACK_SQUARE = RGB(118, 150, 86);
 
-std::vector<png_bytep> GraphicsObserver::read_png_file(const char* file_name) {
+std::vector<png_bytep> GraphicsObserver::readPngFile(const char* file_name) {
     std::unique_ptr<FILE, decltype([](FILE* fp){ // RAII to interface with C-style API
         if (fp) std::fclose(fp);
     })> fp{std::fopen(file_name, "rb")};
@@ -60,12 +60,9 @@ std::vector<png_bytep> GraphicsObserver::read_png_file(const char* file_name) {
 
 void GraphicsObserver::blendImageWithBackground(Pixmap pixmap, GC gc, png_bytep* rowPointers, int width, int height, int bgPixel) {
     XImage* ximage = XGetImage(display, pixmap, 0, 0, width, height, AllPlanes, ZPixmap);
-    int bytes_per_pixel = 4, // RGBA
-        bytes_per_line = width * bytes_per_pixel;
     for (int y = 0; y < height; y++) {
         png_bytep row = rowPointers[y];
         for (int x = 0; x < width; x++) {
-            int offset = y * bytes_per_line + x * bytes_per_pixel;
             int alpha = row[x * 4 + 3];
             int src_r = row[x * 4];
             int src_g = row[x * 4 + 1];
@@ -131,7 +128,7 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
         for (int x = 0; x < Board::SIZE; ++x)
             drawSquare(x, y, ' ');
     for (const auto& dirEntry : std::filesystem::directory_iterator{"icons"})
-        pngIcons.emplace(dirEntry.path().stem(), read_png_file(dirEntry.path().c_str()));
+        pngIcons.emplace(dirEntry.path().stem(), readPngFile(dirEntry.path().c_str()));
     XFlush(display);
 }
 
