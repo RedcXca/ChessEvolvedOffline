@@ -13,7 +13,7 @@ constexpr inline int RGB(int r, int g, int b) {
     return b | g << 8 | r << 16;
 }
 
-constexpr int SQUARE_DIM = 60, WHITE_SQUARE = RGB(238, 238, 210), BLACK_SQUARE = RGB(118, 150, 86);
+constexpr int SQUARE_DIM = 60, WHITE_SQUARE = RGB(238, 238, 210), BLACK_SQUARE = RGB(118, 150, 86), MOVE_CIRCLE = RGB(255, 0, 0);
 
 std::vector<png_bytep> GraphicsObserver::readPngFile(const char* file_name) {
     std::unique_ptr<FILE, decltype([](FILE* fp){ // RAII to interface with C-style API
@@ -86,14 +86,21 @@ void GraphicsObserver::fillRectangle(int x, int y, int width, int height, int co
     XFillRectangle(display, win, gc, x, y, width, height);
 }
 
-void GraphicsObserver::drawSquare(int x, int y, char symbol) {
+void GraphicsObserver::drawSquare(int x, int y, Board::SquareState symbol) {
     int bg = x + y & 1 ? BLACK_SQUARE : WHITE_SQUARE;
     fillRectangle(x * SQUARE_DIM, y * SQUARE_DIM, SQUARE_DIM, SQUARE_DIM, bg);
-    if (symbol != ' ') {
+    if (symbol.piece != ' ') {
         Pixmap pixmap = XCreatePixmap(display, win, SQUARE_DIM, SQUARE_DIM, vinfo.depth);
-        blendImageWithBackground(pixmap, gc, pngIcons.at(std::string{symbol}).data(), SQUARE_DIM, SQUARE_DIM, bg);
+        blendImageWithBackground(pixmap, gc, pngIcons.at(std::string{symbol.piece}).data(), SQUARE_DIM, SQUARE_DIM, bg);
         XCopyArea(display, pixmap, win, gc, 0, 0, SQUARE_DIM, SQUARE_DIM, x * SQUARE_DIM, y * SQUARE_DIM);
         XFreePixmap(display, pixmap);
+    }
+    if (symbol.highlighted) {
+        int centerX = x * SQUARE_DIM + SQUARE_DIM / 2;
+        int centerY = y * SQUARE_DIM + SQUARE_DIM / 2;
+        int radius = SQUARE_DIM / 6;
+        XSetForeground(display, gc, MOVE_CIRCLE); // Set the highlight color
+        XFillArc(display, win, gc, centerX - radius, centerY - radius, 2 * radius, 2 * radius, 0, 360 * 64);
     }
     XFlush(display);
     if (y == Board::SIZE - 1) {
@@ -126,7 +133,7 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
     // XSynchronize(display, True);
     for (int y = 0; y < Board::SIZE; ++y)
         for (int x = 0; x < Board::SIZE; ++x)
-            drawSquare(x, y, ' ');
+            drawSquare(x, y, {' ', false});
     for (const auto& dirEntry : std::filesystem::directory_iterator{"icons"})
         pngIcons.emplace(dirEntry.path().stem(), readPngFile(dirEntry.path().c_str()));
     XFlush(display);

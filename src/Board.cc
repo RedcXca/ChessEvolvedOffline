@@ -228,7 +228,7 @@ bool Board::placePiece(Position pos, char piece) {
     if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return false;
     Color color = std::isupper(piece) ? Color::White : Color::Black;
     if (board[pos.y][pos.x]) {
-        std::erase_if(allPieces, [&](const auto& p){
+        std::erase_if(allPieces, [&](const auto& p) {
             return p.get() == board[pos.y][pos.x];
         });
     }
@@ -265,7 +265,7 @@ bool Board::placePiece(Position pos, char piece) {
         break;
     case 'k':
         allPieces.push_back(std::make_unique<King>(color));
-        kingPositions.insert_or_assign(color, pos); //initialize king pos
+        kingPositions.insert_or_assign(color, pos); // initialize king pos
         break;
     case 'l':
         allPieces.push_back(std::make_unique<Legionary>(color));
@@ -319,9 +319,20 @@ bool Board::placePiece(Position pos, char piece) {
     return true;
 }
 
-char Board::getState(Position pos) const {
-    if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE || !board[pos.y][pos.x]) return ' ';
-    return board[pos.y][pos.x]->toChar();
+Board::SquareState Board::getState(Position pos) const {
+    if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return {' ', false};
+    Board::SquareState state;
+    state.piece = board[pos.y][pos.x] ? board[pos.y][pos.x]->toChar() : ' ';
+    state.highlighted = false;
+    if (selected != Position(-1, -1) && board[selected.y][selected.x]) {
+        for (auto move : legalMoves) {
+            if (move.from == selected && move.to == pos){
+                state.highlighted = true;
+                break;
+            }
+        }
+    }
+    return state;
 }
 
 void Board::removePiece(Position pos) {
@@ -333,10 +344,17 @@ void Board::removePiece(Position pos) {
     }
 }
 
+Color Board::getSide() const {
+    return currColor;
+}
+
 void Board::setColor(Color c) {
     currColor = c;
 }
 
-Color Board::getSide() const {
-    return currColor;
+Position Board::getSelected() {
+    return selected;
+}
+void Board::setSelected(Position p) {
+    selected = p;
 }

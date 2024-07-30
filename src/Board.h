@@ -21,7 +21,6 @@ struct Board {
     const std::vector<Move>& getLegalMoves();
     void makeMove(Move);
     void undoMove();
-    char getState(Position) const;
     Color getSide() const;
     static inline Color getNextColor(Color color) {
         return Color(int(color) ^ 1); // can be generalized for more colors
@@ -29,7 +28,7 @@ struct Board {
     static inline bool isPiece(Piece* piece, char p) {
         return piece && std::tolower(piece->toChar()) == p;
     }
-    void printBoard() {
+    void printBoard() { // for debugging
         for (int i = SIZE - 1; i >= 0; i--) {
             for (int j = 0; j < SIZE; j++) {
                 std::cout << (board[i][j] ? board[i][j]->toChar() : ' ');
@@ -37,8 +36,16 @@ struct Board {
             std::cout << std::endl;
         }
     }
+    struct SquareState {
+        char piece;
+        bool highlighted;
+    };
+    SquareState getState(Position) const;
+    Position getSelected();
+    void setSelected(Position p);
 
 private:
+    Position selected = {-1, -1};
     std::vector<Move> history;
     std::vector<Move> legalMoves;
     std::array<std::array<Piece*, SIZE>, SIZE> board{};

@@ -10,7 +10,7 @@
 #include "ComputerLevel3.h"
 #include <optional>
 
-char Game::getState(Position p) const {
+Board::SquareState Game::getState(Position p) const {
     return board.getState(p);
 }
 
@@ -40,12 +40,18 @@ void Game::setup() {
                 bool badPawn = false;
                 for (int x = 0; x < Board::SIZE; ++x)
                     badPawn |= Board::isPiece(board.board[Board::SIZE - 1][x], 'p') || Board::isPiece(board.board[0][x], 'p');
-                if (pieceCount['k'] != 1) std::cerr << "There must be exactly 1 black king.\n";
-                else if (pieceCount['K'] != 1) std::cerr << "There must be exactly 1 white king.\n";
-                else if (badPawn) std::cerr << "No pawns may be on the first or last row of the board.\n";
-                else if (!board.validateBoard(Color::White) || !board.validateBoard(Color::Black)) std::cerr << "Neither king must be in check.\n";
-                else break;
-            } else std::cerr << "Invalid setup command.\n";
+                if (pieceCount['k'] != 1)
+                    std::cerr << "There must be exactly 1 black king.\n";
+                else if (pieceCount['K'] != 1)
+                    std::cerr << "There must be exactly 1 white king.\n";
+                else if (badPawn)
+                    std::cerr << "No pawns may be on the first or last row of the board.\n";
+                else if (!board.validateBoard(Color::White) || !board.validateBoard(Color::Black))
+                    std::cerr << "Neither king must be in check.\n";
+                else
+                    break;
+            } else
+                std::cerr << "Invalid setup command.\n";
         } catch (const ChessException& ce) {
             std::cerr << ce.what() << '\n';
         }
@@ -79,8 +85,10 @@ void Game::play(std::map<Color, std::string> players) {
                 break;
             } else if (command == "move") {
                 auto move = actualPlayers[board.getSide()]->getNextMove(board);
-                if (!board.board[move.from.y][move.from.x]) std::cerr << "No piece at from square.\n";
-                else if (board.board[move.from.y][move.from.x]->getColor() != board.getSide()) std::cerr << "Cannot move opponent's piece.\n";
+                if (!board.board[move.from.y][move.from.x])
+                    std::cerr << "No piece at from square.\n";
+                else if (board.board[move.from.y][move.from.x]->getColor() != board.getSide())
+                    std::cerr << "Cannot move opponent's piece.\n";
                 else {
                     std::optional<Move> actualMove;
                     for (auto legalMove : board.getLegalMoves())
@@ -98,6 +106,7 @@ void Game::play(std::map<Color, std::string> players) {
                         }
                     if (actualMove) {
                         board.makeMove(*actualMove);
+                        board.setSelected(Position(-1, -1));
                         notifyObservers();
                         auto nextLegalMoves = board.generateLegalMoves();
                         if (actualMove->check) {
@@ -112,9 +121,20 @@ void Game::play(std::map<Color, std::string> players) {
                             for (auto& [color, score] : scores) ++score;
                             break;
                         }
-                    } else std::cerr << "Illegal move.\n";
+                    } else
+                        std::cerr << "Illegal move.\n";
                 }
-            } else std::cerr << "Invalid command!\n";
+            } else if (command == "select") {
+                std::string position;
+                std::cin >> position;
+                board.setSelected(Position(position));
+                notifyObservers();
+            } else if (command == "deselect") {
+                board.setSelected(Position(-1, -1));
+                notifyObservers();
+            }
+            else
+                std::cerr << "Invalid command!\n";
         } catch (const ChessException& ce) {
             std::cerr << ce.what() << '\n';
         }

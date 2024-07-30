@@ -2,6 +2,7 @@
 #define SUBJECT_H
 #include <vector>
 #include "position.h"
+#include "Board.h"
 
 class Observer;
 
@@ -12,7 +13,7 @@ public:
     void attach(Observer* o);
     void detach(Observer* o);
     void notifyObservers();
-    virtual char getState(Position p) const = 0;
+    virtual Board::SquareState getState(Position p) const = 0;
     virtual ~Subject() = default;
 };
 
