@@ -8,9 +8,9 @@ MoveInput ComputerLevel3::getNextMove(Board& board) {
     std::vector<Move> captureChecks;
     captureChecks.reserve(moves.size());
     for (const Move& move : moves) {
-        int priorThreats = board.checkThreatened(move.from).at(board.getNextColor(board.getSide()));
+        int priorThreats = board.checkThreatened(move.from)[board.getNextColor(board.getSide())];
         board.makeMove(move);
-        int postThreats = board.checkThreatened(move.to).at(board.getSide());
+        int postThreats = board.checkThreatened(move.to)[board.getSide()];
         board.undoMove();
         if (postThreats < priorThreats) {
             avoidCaptures.push_back(move);
