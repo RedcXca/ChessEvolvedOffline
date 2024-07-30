@@ -34,13 +34,10 @@
 Board::Board(const std::string& fileName) {
     std::ifstream file(fileName);
     std::string line;
-    for (int y = 0; std::getline(file, line); ++y) {
-        int x = 0;
-        for (char c : line) {
-            if (c != ' ') placePiece(Position(x, SIZE - 1 - y), c);
-            ++x;
-        }
-    }
+    for (int y = SIZE - 1; y >= 0 && std::getline(file, line); --y)
+        for (int x = 0; x < std::min(SIZE, (int) line.size()); ++x)
+            if (line[x] != ' ')
+                placePiece(Position(x, y), line[x]);
 }
 
 inline int signum(int x) { return (x > 0) - (x < 0); }
