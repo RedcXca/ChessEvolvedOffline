@@ -71,8 +71,8 @@ int ComputerLevel4::squareScore(Board& board, Position pos) {
 float ComputerLevel4::moveScore(Board& board, Move move, bool log) {
     int minGain = INT_MAX;
     board.makeMove(move);
-    for (int i = 0; i < 7; ++i) {
-        for (int j = 0; j < 7; ++j) {
+    for (int i = 0; i < Board::SIZE; ++i) {
+        for (int j = 0; j < Board::SIZE; ++j) {
             Position pos{i, j};
             if (board.getPiece(pos) && board.getPiece(pos)->getColor() == board.getNextColor(board.getSide())) {
                 int gain = squareScore(board, pos);
