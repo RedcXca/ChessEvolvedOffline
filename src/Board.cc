@@ -54,7 +54,7 @@ void Board::testUndo() {
     history.pop_back();
     board[lastMove.from.y][lastMove.from.x] = lastMove.originalPiece; // reset original piece
     if (lastMove.originalPiece->toChar() != board[lastMove.to.y][lastMove.to.x]->toChar()) {
-        allPieces.pop_back(); // this means promotion went through, it's a move not a test
+        allPieces.pop_back(); // this means it's a promotion
     }
     if (lastMove.enPassantPos == lastMove.to && isPiece(lastMove.originalPiece, 'p')) {
         board[lastMove.to.y][lastMove.to.x] = nullptr;
@@ -127,7 +127,8 @@ void Board::makeMove(Move move) {
     testMove(move);
     generateLegalMoves();
 }
-// assumes move is legal
+
+// assumes move is legal (ignoring checks)
 void Board::testMove(Move move) {
     history.push_back(move);
     board[move.to.y][move.to.x] = move.originalPiece;
@@ -256,11 +257,6 @@ const std::vector<Move>& Board::getLegalMoves() {
 bool Board::placePiece(Position pos, char piece) {
     if (pos.x < 0 || pos.x >= SIZE || pos.y < 0 || pos.y >= SIZE) return false;
     Color color = std::isupper(piece) ? Color::White : Color::Black;
-    if (board[pos.y][pos.x]) {
-        std::erase_if(allPieces, [&](const auto& p) {
-            return p.get() == board[pos.y][pos.x];
-        });
-    }
     switch (std::tolower(piece)) {
     case 'a':
         allPieces.push_back(std::make_unique<Angel>(color));
@@ -344,6 +340,10 @@ bool Board::placePiece(Position pos, char piece) {
     default:
         return false;
     }
+    if (board[pos.y][pos.x])
+        std::erase_if(allPieces, [&](const auto& p) {
+            return p.get() == board[pos.y][pos.x];
+        });
     board[pos.y][pos.x] = allPieces.back().get();
     return true;
 }

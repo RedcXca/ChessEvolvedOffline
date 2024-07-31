@@ -16,5 +16,4 @@ public:
     virtual Board::SquareState getState(Position p) const = 0;
     virtual ~Subject() = default;
 };
-
 #endif

@@ -3,8 +3,6 @@
 #include <iostream>
 
 void TextObserver::update() {
-    if (!game) return;
-
     for (int i = Board::SIZE - 1; i >= 0; i--) {
         std::cout << i + 1 << "  ";
         for (int j = 0; j < Board::SIZE; j++) {

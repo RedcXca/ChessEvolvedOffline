@@ -132,7 +132,6 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
     hints.height = hints.base_height = hints.min_height = hints.max_height = Board::SIZE * SQUARE_DIM;
     hints.width = hints.base_width = hints.min_width = hints.max_width = Board::SIZE * SQUARE_DIM;
     XSetNormalHints(display, win, &hints);
-    // XSynchronize(display, True);
     for (int y = 0; y < Board::SIZE; ++y) {
         for (int x = 0; x < Board::SIZE; ++x) {
             drawSquare(x, y, {' ', false});

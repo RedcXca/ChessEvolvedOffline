@@ -1,6 +1,5 @@
 #include "ComputerLevel3.h"
 
-// TODO: UNIMPLEMENTED
 MoveInput ComputerLevel3::getNextMove(Board& board) {
     auto moves = board.getLegalMoves();
     std::vector<Move> avoidCaptures;
