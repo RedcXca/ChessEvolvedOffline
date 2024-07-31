@@ -17,7 +17,7 @@ struct Board {
     explicit Board(const std::string& fileName = "initialState.txt");
     bool validateBoard(Color side);
     std::map<Color, int> checkThreatened(Position);
-    std::map<Color, std::vector<Piece*>> checkThreatenedPieces(Position pos);
+    std::map<Color, std::vector<Piece*>> checkThreatenedPieces(Position);
     const std::vector<Move>& getLegalMoves();
     void makeMove(Move);
     void undoMove();
