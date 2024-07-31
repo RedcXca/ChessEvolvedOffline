@@ -7,28 +7,28 @@
 #include "Evaluator.h"
 #include <chrono>
 
-constexpr int MAX_DEPTH = 3;
-
 namespace {
+    constexpr int MAX_DEPTH = 3;
+
     std::unordered_map<char, Evaluator> evaluators;
+
+    inline int mvv_lva(const Move& move) {
+        return move.capturedPiece ? move.capturedPiece->getValue() - move.originalPiece->getValue() : -1;
+    }
+
+    int evaluateState(Board& board) {
+        int evaluation = 0;
+        for (int y = 0; y < Board::SIZE; ++y)
+            for (int x = 0; x < Board::SIZE; ++x)
+                if (auto piece = board.getPiece(Position{x, y})) {
+                    char upperChar = std::toupper(piece->toChar());
+                    if (!evaluators.count(upperChar)) evaluators.emplace(upperChar, Evaluator{upperChar});
+                    int score = piece->getValue() * 100 + evaluators.at(upperChar).getEval(Position{x, y}, piece->getColor());
+                    evaluation += score * (piece->getColor() == board.getSide() ? 1 : -1);
+                }
+        return evaluation;
+    }
 };
-
-int evaluateState(Board& board) {
-    int evaluation = 0;
-    for (int y = 0; y < Board::SIZE; ++y)
-        for (int x = 0; x < Board::SIZE; ++x)
-            if (auto piece = board.getPiece(Position{x, y})) {
-                char upperChar = std::toupper(piece->toChar());
-                if (!evaluators.count(upperChar)) evaluators.emplace(upperChar, Evaluator{upperChar});
-                int score = piece->getValue() * 100 + evaluators.at(upperChar).getEval(Position{x, y}, piece->getColor());
-                evaluation += score * (piece->getColor() == board.getSide() ? 1 : -1);
-            }
-    return evaluation;
-}
-
-inline int mvv_lva(const Move& move) {
-    return move.capturedPiece ? move.capturedPiece->getValue() - move.originalPiece->getValue() : -1;
-}
 
 int ComputerLevel5::minimax(Board& board, int depth, bool maximize, int alpha = -INT_MAX, int beta = INT_MAX) {
     int multiplier = board.getSide() == color ? 1 : -1;
