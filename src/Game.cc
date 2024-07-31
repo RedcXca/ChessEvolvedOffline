@@ -20,6 +20,7 @@ void Game::setup() {
     for (int x = 0; x < Board::SIZE; ++x)
         for (int y = 0; y < Board::SIZE; ++y)
             board.removePiece(Position{x, y});
+    notifyObservers();
     for (std::string command, piece, square; std::cin >> command;) {
         try {
             if (command == "+") {
