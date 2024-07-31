@@ -4,12 +4,13 @@
 
 This project is a chess game implementation using both text-based and graphical XWindow-based
 displays. The game is built using observer patterns to separate game logic from the display.
-In addition to the standard chess pieces, this version introduces 20 new pieces.
+In addition to the standard chess pieces, this version introduces 20 new pieces which
+are designed and drawn entirely by the development team.
 Hence the "Evolved" in the game name.
 
-For example, take a look at the piece "Ross Evans":
+For example, take a look at our custom Unicorn piece checkmating the opponent in move 3.
 
-![Ross Evans](src/movesetGallery/rossevans.png)
+![image](https://github.com/user-attachments/assets/b88f9705-f31b-4756-8a1e-5093a6296c15)
 
 ## Features
 
