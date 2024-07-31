@@ -47,4 +47,5 @@ The game otherwise follows normal chess rules of checkmating, stalemating, scori
 
 ## UML Diagram
 
-![UML Diagram](old-uml.png)
+![uml](https://github.com/user-attachments/assets/f4ce5710-56bb-4aa8-a1ba-725f44cd85d0)
+
