@@ -13,7 +13,7 @@ constexpr inline int RGB(int r, int g, int b) {
     return r << 16 | g << 8 | b;
 }
 
-constexpr int SQUARE_DIM = 60, WHITE_SQUARE = RGB(238, 238, 210), BLACK_SQUARE = RGB(118, 150, 86), MOVE_CIRCLE = RGB(255, 0, 0);
+constexpr int SQUARE_DIM = 60, WHITE_SQUARE = RGB(90, 100, 110), BLACK_SQUARE = RGB(30, 40, 50), MOVE_CIRCLE = RGB(255, 0, 0);
 
 std::vector<png_bytep> GraphicsObserver::readPngFile(const char* file_name) {
     std::unique_ptr<FILE, decltype([](FILE* fp) { // RAII to interface with C-style API
