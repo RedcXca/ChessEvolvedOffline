@@ -53,6 +53,9 @@ void Game::setup() {
                     std::cerr << "Neither king must be in check.\n";
                 else
                     break;
+            } else if (command == "default") {
+                board = Board{};
+                notifyObservers();
             } else
                 std::cerr << "Invalid setup command.\n";
         } catch (const ChessException& ce) {

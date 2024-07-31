@@ -86,5 +86,5 @@ float ComputerLevel4::moveScore(Board& board, Move move, bool log) {
 
     if (log) std::cout << "Calculating centralization score from: " << move.from.toString() << " to " << move.to.toString() << ": SCORE: " << (minGain + CHECKWEIGHT * move.check + CENTRALIZATIONWEIGHT * (centralizationScore(move.to) - centralizationScore(move.from))) * (!move.promotionPiece || move.promotionPiece == 'Q') << " minGain " << minGain << " Check: " << (move.check ? "true" : "false") << " Centralization To  " << centralizationScore(move.to) << " Centralization From " << centralizationScore(move.from) << std::endl;
 
-    return (minGain + CHECKWEIGHT * move.check + CENTRALIZATIONWEIGHT * (TOCENTRALIZATIONWEIGHT * centralizationScore(move.to) - centralizationScore(move.from))) * (!move.promotionPiece || move.promotionPiece == 'Q'); // auto-queen
+    return (minGain + CHECKWEIGHT * move.check + CENTRALIZATIONWEIGHT * (TOCENTRALIZATIONWEIGHT * centralizationScore(move.to) - centralizationScore(move.from))) * (!move.promotionPiece || move.promotionPiece == 'Q') + (move.promotionPiece ? 9 : 0); // auto-queen
 }
