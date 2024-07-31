@@ -10,8 +10,9 @@
 class Evaluator {
     std::array<std::array<int, Board::SIZE>, Board::SIZE> evals;
     char pieceType;
-    public:
-    Evaluator(char);
+
+public:
+    explicit Evaluator(char);
     int getEval(Position, Color);
 };
 #endif
