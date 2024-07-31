@@ -21,14 +21,10 @@ MoveInput ComputerLevel4::getNextMove(Board& board) {
     auto maxScore = std::max_element(moveScores.begin(), moveScores.end(), [&](const auto& a, const auto& b) {
         return a.first < b.first;
     });
-    //std::cout << "MaxScore: " << maxScore->first << std::endl;
     std::vector<Move> bestMoves;
     for (auto& move : moveScores) {
         if (std::fabs(move.first - maxScore->first) < 0.001f) bestMoves.push_back(move.second);
     }
-    // for (auto& move : bestMoves) {
-    //     moveScore(board, move, true);
-    // }
     return randomMove(bestMoves);
 }
 

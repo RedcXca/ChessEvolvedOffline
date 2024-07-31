@@ -25,8 +25,8 @@ void Game::setup() {
         try {
             if (command == "+") {
                 std::cin >> piece >> square;
-                board.placePiece(Position{square}, piece[0]);
-                notifyObservers();
+                if (board.placePiece(Position{square}, piece[0])) notifyObservers();
+                else std::cerr << "Invalid piece.\n";
             } else if (command == "-") {
                 std::cin >> square;
                 if (board.removePiece(Position{square})) notifyObservers();

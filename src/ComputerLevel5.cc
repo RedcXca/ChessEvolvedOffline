@@ -1,11 +1,9 @@
 #include "ComputerLevel5.h"
 #include <climits>
 #include <algorithm>
-#include <optional>
 #include <unordered_map>
 #include <cctype>
 #include "Evaluator.h"
-#include <chrono>
 
 namespace {
     constexpr int MAX_DEPTH = 3;
