@@ -389,3 +389,7 @@ void Board::setSelected(Position p) {
 Piece* Board::getPiece(Position p) {
     return board[p.y][p.x];
 }
+
+const std::vector<Move>& Board::getMoveHistory() const {
+    return history;
+}

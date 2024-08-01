@@ -45,6 +45,7 @@ struct Board {
     Position getSelected();
     void setSelected(Position p);
     Piece* getPiece(Position p);
+    const std::vector<Move>& getMoveHistory() const;
 
 private:
     Position selected = {-1, -1};
