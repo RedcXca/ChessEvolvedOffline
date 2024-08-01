@@ -129,8 +129,7 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
         XSetFont(display, textGC, font->fid);
     else
         std::cerr << "Unable to load font " << fontName << '\n'; // not a fatal error
-    unsigned long whitePixel = WhitePixel(display, screen);
-    XSetForeground(display, textGC, whitePixel);
+    XSetForeground(display, textGC, WhitePixel(display, screen));
     XSizeHints hints;
     hints.flags = (USPosition | PSize | PMinSize | PMaxSize);
     hints.height = hints.base_height = hints.min_height = hints.max_height = Board::SIZE * SQUARE_DIM;
