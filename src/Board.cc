@@ -211,7 +211,7 @@ const std::vector<Move>& Board::generateLegalMoves() {
                     }
                 }
                 if (isPiece(board[i][j], 'k')) {
-                    if (board[i][j]->getHasMoved()) continue;
+                    if (j != 4 || board[i][j]->getHasMoved()) continue;
                     if (!board[i][j + 1] && !board[i][j + 2] && board[i][j + 3] && std::tolower(board[i][j + 3]->toChar()) == 'r' && !board[i][j + 3]->getHasMoved()) {
                         if (!checkThreatened(Position(j, i))[otherSide] && !checkThreatened(Position(j + 1, i))[otherSide] && !checkThreatened(Position(j + 2, i))[otherSide]) {
                             moves.push_back(Move(Position(j, i), Position(j + 2, i), board[i][j], nullptr, enPassantSquare));
