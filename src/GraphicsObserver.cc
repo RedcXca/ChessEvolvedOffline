@@ -125,8 +125,12 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
     gc = XCreateGC(display, win, 0, NULL);
     textGC = XCreateGC(display, win, 0, NULL);
     auto fontName = "-*-helvetica-bold-r-normal--12-*-*-*-*-*-*-*";
-    if (font = XLoadQueryFont(display, fontName)) XSetFont(display, textGC, font->fid);
-    else std::cerr << "Unable to load font " << fontName << '\n'; // not a fatal error
+    if (font = XLoadQueryFont(display, fontName))
+        XSetFont(display, textGC, font->fid);
+    else
+        std::cerr << "Unable to load font " << fontName << '\n'; // not a fatal error
+    unsigned long whitePixel = WhitePixel(display, screen);
+    XSetForeground(display, textGC, whitePixel);
     XSizeHints hints;
     hints.flags = (USPosition | PSize | PMinSize | PMaxSize);
     hints.height = hints.base_height = hints.min_height = hints.max_height = Board::SIZE * SQUARE_DIM;
@@ -145,7 +149,7 @@ GraphicsObserver::GraphicsObserver(Game* game) : Observer{game}, display{XOpenDi
 
 void GraphicsObserver::update() {
     for (int y = 0; y < Board::SIZE; ++y)
-        for (int x = 0; x < Board::SIZE; ++x){
+        for (int x = 0; x < Board::SIZE; ++x) {
             Board::SquareState newState = game->getState(Position{x, Board::SIZE - 1 - y});
             if (newState != prevGrid[y][x]) {
                 drawSquare(x, y, newState);
