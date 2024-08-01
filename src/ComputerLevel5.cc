@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <cctype>
 #include "Evaluator.h"
+#include <random>
 
 namespace {
     constexpr int MAX_DEPTH = 3;
@@ -60,6 +61,13 @@ int ComputerLevel5::minimax(Board& board, int depth, bool maximize, int alpha = 
 }
 
 MoveInput ComputerLevel5::getNextMove(Board& board) {
+    if (auto& moveHistory = board.getMoveHistory(); moveHistory.size())
+        openingBook.filterOpenings({moveHistory.back().from, moveHistory.back().to});
+    if (auto& possibleOpenings = openingBook.getOpenings(); possibleOpenings.size()) {
+        auto move = possibleOpenings[std::uniform_int_distribution<>(0, possibleOpenings.size() - 1)(gen)][openingBook.getMoveIndex()];
+        openingBook.filterOpenings(move);
+        return {move.first, move.second};
+    }
     auto moves = board.getLegalMoves();
     int bestScore = INT_MIN;
     std::vector<Move> bestMoves;
