@@ -20,20 +20,25 @@ For example, take a look at our custom Unicorn piece checkmating the opponent in
   - Level 2: Prefers capturing moves and checks.
   - Level 3: Avoids capture, prefers capturing moves, and checks.
   - Level 4: More advanced strategies.
+  - Level 5: Minimax algorithm with alpha beta pruning
 
 ## Commands
 
-- `game` `white-player` `black-player`: Start a new game. The players can be `human` or `computer1`, `computer2`, `computer3`, and `computer4`.
+- `game` `white-player` `black-player`: Start a new game. The players can be `human` or `computer1`, `computer2`, `computer3`, `computer4`, or `computer5`.
 - `move` `e2` `e4`: Move a piece from `e2` to `e4`. For castling: `move e1 g1` or `move e1 c1` (king moves two squares towards the rook castling with it).
   For pawn promotion: `move e7 e8 Q`.
+- `undo` to undo the most recent move.
+- `select` e4: highlight the current legal moves of the piece on e4
+- `deselect`: deselect piece
 - `resign`: Resign the game which gives a point to the opposing player.
 - `setup`: Enter setup mode to configure the board.
   - `+` `K` `e1`: Places piece `K` at `e1`.
   - `-` `e1`: Removes the piece on `e1`.
   - `=` `colour`: Set the next turn to be `white` or `black`.
+  - `default`: Places the default chess position on the board 
   - `done`: Exit setup mode.
 
-The game otherwise follows normal chess rules of checkmating, stalemating, scoring, and alternating turns. Except there is no draws from threefold repetitions or the fifty-move rule.
+The game otherwise follows normal chess rules of checkmating, stalemating, scoring, and alternating turns, except there are no draws from threefold repetitions, insufficient material, or the fifty-move rule.
 
 ## Setup and Compilation
 
