@@ -1,16 +1,16 @@
 setup
-+ K h8
-+ R d7
-+ N d5
-+ Q f4
++ K h1
++ R e7
++ N e5
++ Q c4
 + k a1
-+ b h4
++ b a4
 = black
 done
 game human human
-move h4 f6
+move a4 c6
 
-select h8
-select d7
-select d5
-select f4
+select h1
+select e7
+select e5
+select c4

@@ -1,0 +1,17 @@
+setup
++ K c3
++ C b3
++ k f6
++ q e7
++ q f7
++ q g7
++ q e6
++ q g6
++ r e5
++ q f5
++ q g5
+= white
+done
+game human human
+
+move b3 d4

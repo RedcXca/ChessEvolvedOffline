@@ -1,12 +1,12 @@
 setup
-+ K h8
-+ k a1
-+ n f6
-+ q e5
-= black
++ K a8
++ N f3
++ Q e4
++ k h1
+= white
 done
 game human human
 
-move f6 e8
-move h8 h7
-move e5 g7
+move f3 e1
+move h1 h2
+move e4 g2
