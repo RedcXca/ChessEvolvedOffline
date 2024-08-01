@@ -1,0 +1,18 @@
+setup
++ k h8
++ K a1
++ Q b7
++ P a2
+= white
+done
+game human computer1
+move a2 a4
+move
+move a4 a5
+move
+move a5 a6
+move
+move a6 a7
+move
+
+move a7 a8 R

@@ -1,0 +1,16 @@
+setup
++ K h8
++ R d7
++ N d5
++ Q f4
++ k a1
++ b h4
+= black
+done
+game human human
+move h4 f6
+
+select h8
+select d7
+select d5
+select f4

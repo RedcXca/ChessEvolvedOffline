@@ -1,0 +1,39 @@
+setup
++ R a1
++ N b1
++ B c1
++ Q d1
++ K e1
++ B f1
++ N g1
++ R h1
+
++ A a2
++ C b2
++ V c2
++ W d2
++ W e2
++ V f2
++ C g2
++ A h2
+
++ S a3
++ T b3
++ U c3
++ V d3
++ W e3
++ X f3
++ Y g3
++ Z h3
+
++ P a4
++ P b4
++ P c4
++ P d4
++ P e4
++ P f4
++ P g4
++ P h4
+
++ k h8
+done
