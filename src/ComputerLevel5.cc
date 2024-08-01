@@ -30,23 +30,21 @@ namespace {
 
 int ComputerLevel5::minimax(Board& board, int depth, bool maximize, int alpha = -INT_MAX, int beta = INT_MAX) {
     int multiplier = board.getSide() == color ? 1 : -1;
-    if (!board.getLegalMoves().size()) {
-        if (!board.validateBoard(board.getSide())) return -multiplier * INT_MAX;
-        return 0;
+    if (board.getLegalMoves().empty()) { // Game over
+        if (board.validateBoard(board.getSide())) return 0; // Draw has neutral value
+        return -multiplier * (1000000000 + depth * 10); // checkmate is worth more when reached in less moves
     }
-    if (!depth) {
-        return multiplier * evaluateState(board);
-    }
+    if (!depth) return multiplier * evaluateState(board);
     int bestEval = maximize ? INT_MIN : INT_MAX;
-    std::vector<Move> capturing, nonCapturing;
+    std::vector<Move> categorizedMoves[2];
     for (auto move : board.getLegalMoves())
-        (move.capturedPiece ? capturing : nonCapturing).push_back(move);
-    std::sort(capturing.begin(), capturing.end(), [](auto& m1, auto& m2) {
+        categorizedMoves[!move.capturedPiece].push_back(move);
+    std::sort(categorizedMoves[0].begin(), categorizedMoves[0].end(), [](auto& m1, auto& m2) {
         return mvv_lva(m1) > mvv_lva(m2);
     });
-    for (auto& moves : {capturing, nonCapturing})
-        for (auto move : moves) {
-            if (alpha >= beta) break;
+    for (const auto& moves : categorizedMoves)
+        for (const auto& move : moves) {
+            if (alpha >= beta) return bestEval;
             board.makeMove(move);
             int nextEval = minimax(board, depth - 1, !maximize, alpha, beta);
             board.undoMove();
